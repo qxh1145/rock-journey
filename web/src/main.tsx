@@ -68,7 +68,8 @@ function App() {
   // trang sổ cũ đang bị xé (Figma: xé trên xuống ~0,8s)
   const [torn, setTorn] = useState<{ key: string; node: React.ReactNode } | null>(null)
   const music = useMusic(tracks)
-  const activeUserId = useRef<string | null>(null)
+  // undefined = chưa nhận INITIAL_SESSION; null = khách → lần đầu luôn route
+  const activeUserId = useRef<string | null | undefined>(undefined)
 
   const loadCurrentRoute = useCallback(async () => {
     if (!supabase) return setScreen('setup')
