@@ -91,10 +91,13 @@ export function useMusic(tracks: Track[], defaultQueue: string[] | null) {
     a.addEventListener('timeupdate', t); a.addEventListener('loadedmetadata', d); a.addEventListener('error', e); a.addEventListener('ended', n)
     // giảm nhạc khi có hiệu ứng quan trọng
     duck = () => { a.volume = MUSIC_VOL * 0.4; window.setTimeout(() => (a.volume = MUSIC_VOL), 900) }
-    // autoplay bị chặn → thử lại ở tương tác đầu tiên
-    const unlock = () => prefs.music && a.paused && a.play().catch(() => {})
-    document.addEventListener('pointerdown', unlock, { once: true })
-    return () => { a.removeEventListener('timeupdate', t); a.removeEventListener('loadedmetadata', d); a.removeEventListener('error', e); a.removeEventListener('ended', n); document.removeEventListener('pointerdown', unlock) }
+    // autoplay bị chặn → thử lại ở mọi tương tác cho tới khi phát được.
+    // Cảm ứng chỉ được phép phát ở pointerup/touchend/click (không phải pointerdown) nên nghe đủ các event
+    const GESTURES = ['pointerdown', 'pointerup', 'touchend', 'click', 'keydown']
+    const stop = () => GESTURES.forEach((g) => document.removeEventListener(g, unlock, true))
+    const unlock = () => { if (prefs.music && a.paused && a.src) a.play().then(stop, () => {}) }
+    GESTURES.forEach((g) => document.addEventListener(g, unlock, true))
+    return () => { a.removeEventListener('timeupdate', t); a.removeEventListener('loadedmetadata', d); a.removeEventListener('error', e); a.removeEventListener('ended', n); stop() }
   }, [prefs.music])
 
   useEffect(() => {
