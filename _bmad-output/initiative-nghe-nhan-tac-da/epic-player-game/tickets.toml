@@ -1,0 +1,155 @@
+[[entry]]
+id = 1
+type = "story"
+title = "Split player flow into screen components"
+description = "Splits web/src/main.tsx into per-screen components (start, notebook, carve, music, medal, result, avatar) with no behaviour change, so later stories touch separate files."
+verify = "Build passes and a manual journey on local dev matches the current behaviour screen for screen."
+covers = []
+after = []
+hitl = false
+risk = "low"
+
+[[entry]]
+id = 2
+type = "story"
+title = "Test harness and tracer journey"
+description = "Adds Vitest and Playwright (390x844 viewport) and one journey test: sign in, answer Q1, reload, resume at Q2, against staging."
+verify = "The Playwright journey passes in CI against staging."
+covers = ["FR-08", "FR-09"]
+after = [1, "1.4", "1.9"]
+hitl = true
+risk = "medium"
+unknown = "How Playwright signs in on staging, since Google sign-in is mandatory (test user via Supabase admin-created session?)."
+
+[[entry]]
+id = 3
+type = "story"
+title = "Save state indicator and safe resend"
+description = "Adds Đang lưu / Đã lưu / Chưa lưu states for answers, offline detection and an idempotent resend, and owns the client error mapper for the RPC error-code contract that story 8 reuses."
+verify = "Playwright with network offline shows Chưa lưu, resends on reconnect, and the server holds exactly one answer."
+covers = ["FR-15", "FR-09", "CAP-2", "CAP-3"]
+after = [2, "1.1", "1.6"]
+hitl = false
+risk = "medium"
+
+[[entry]]
+id = 6
+type = "story"
+title = "Music sheet to spec"
+description = "Starts music on the first user gesture, traps focus in the sheet and returns it to Đổi nhạc, and persists playlist and toggles across reloads; owns the audio prefs API that stories 4 and 8 read."
+verify = "Unit tests on prefs plus Playwright: music playing after first tap, focus returns on close, choice survives reload."
+covers = ["FR-12", "CAP-6"]
+after = [2]
+hitl = false
+risk = "low"
+
+[[entry]]
+id = 4
+type = "story"
+title = "Question, feedback and page tear to spec"
+description = "Brings the notebook to CAP-2..4: single record on double-tap, text-not-colour feedback, input locked during the tear, SFX gated through the prefs API from story 6, reduced-motion swap."
+verify = "Unit and Playwright tests cover double-tap, locked input during tear, and the reduced-motion path."
+covers = ["FR-05", "FR-07", "FR-16", "CAP-2", "CAP-3", "CAP-4"]
+after = [3, 6]
+hitl = false
+risk = "low"
+
+[[entry]]
+id = 5
+type = "story"
+title = "Carve sequence and mascot stages"
+description = "Runs the carve after each even answer to stages 2..7/7 per CAP-5, never replaying a played carve on resume."
+verify = "Playwright reaching Q4, reloading and continuing shows stage 3/7 with no repeated carve."
+covers = ["FR-06", "FR-16", "CAP-5"]
+after = [2]
+hitl = false
+risk = "low"
+
+[[entry]]
+id = 7
+type = "story"
+title = "Showcase screen"
+description = "Adds the new CAP-9 showcase (mascot and 4 shelves, auto-advancing) between the Q12 carve and the result, with the spec's placeholder copy."
+verify = "Playwright finishing Q12 sees the showcase advance through 4 states and its CTA opens the result."
+covers = ["CAP-9"]
+after = [2]
+hitl = false
+risk = "medium"
+
+[[entry]]
+id = 14
+type = "story"
+title = "Medal and result screens"
+description = "Brings the medal overlay (reduced motion) and result screen to CAP-7/8: exactly 10/12 earns Mầm Nghề and prize text, other scores get the thank-you, no replay (FR-11 on the result screen)."
+verify = "Playwright with seeded 10/12, 11/12 and 9/12 sessions shows the right title, prize text and no replay button."
+covers = ["FR-10", "FR-11", "FR-16", "CAP-7", "CAP-8"]
+after = [2]
+hitl = false
+risk = "low"
+
+[[entry]]
+id = 8
+type = "story"
+title = "Start screen, avatar menu and player messages"
+description = "Brings the start screen and avatar menu to CAP-1 and CAP-10, and clear messages for loading, network, login, ineligible and claimed states via story 3's error mapper; FR-11 here is the returning player seeing the old result on sign-in."
+verify = "Playwright covers start vs resume CTA, sign-out, and each message state."
+covers = ["FR-02", "FR-03", "FR-04", "FR-11", "CAP-1", "CAP-10"]
+after = [3, 6]
+hitl = false
+risk = "low"
+
+[[entry]]
+id = 9
+type = "story"
+title = "RLS and RPC access tests"
+description = "Adds tests that a player account cannot read other players' data or call admin RPCs; failures become bugs in backlog/."
+verify = "The RLS suite runs in CI against staging and passes, or each failure has a backlog bug."
+covers = ["FR-03", "FR-04"]
+after = [2]
+hitl = false
+risk = "medium"
+
+[[entry]]
+id = 10
+type = "story"
+title = "30-user load test on staging"
+description = "A k6 script runs 30 concurrent players through the journey and checks no lost or duplicated answers and one play per identity; failures become backlog bugs."
+verify = "k6 run on staging reports zero lost or duplicated answers and one session per player."
+covers = ["FR-04", "FR-08"]
+after = [2, "1.6"]
+hitl = true
+risk = "medium"
+
+[[entry]]
+id = 11
+type = "story"
+title = "Player analytics events"
+description = "Fires the player PRD §20 events across the journey with no tokens, emails or correct answers sent out."
+verify = "Unit tests assert each event fires once at its trigger and payloads contain no PII or answers."
+covers = []
+after = [3, 4, 5, 6, 7, 8, 14]
+hitl = false
+risk = "low"
+unknown = "Which analytics provider receives the events."
+
+[[entry]]
+id = 12
+type = "story"
+title = "Refactor sweep"
+description = "Cleanup deferred from the epic's plans and reviews; scope set when it starts."
+verify = "All epic tests still pass."
+covers = []
+after = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 14]
+hitl = false
+risk = "low"
+
+[[entry]]
+id = 13
+type = "story"
+title = "§23 player end-to-end suite"
+description = "One Playwright suite walking every §23 player item, run on staging and production."
+verify = "The suite passes on staging and production."
+covers = ["FR-01", "FR-02", "FR-03", "FR-04", "FR-05", "FR-06", "FR-07", "FR-08", "FR-09", "FR-10", "FR-11", "FR-12", "FR-15", "FR-16"]
+after = [12, "1.5"]
+hitl = true
+risk = "medium"

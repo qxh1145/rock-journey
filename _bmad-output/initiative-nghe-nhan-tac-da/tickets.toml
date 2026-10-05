@@ -1,0 +1,26 @@
+[[epic]]
+id = 1
+slug = "epic-platform-baseline"
+title = "Platform baseline"
+covers = []
+
+[[epic]]
+id = 2
+slug = "epic-player-game"
+title = "Player game to spec"
+covers = ["FR-01", "FR-02", "FR-03", "FR-04", "FR-05", "FR-06", "FR-07", "FR-08", "FR-09", "FR-10", "FR-11", "FR-12", "FR-15", "FR-16"]
+after = [{ epic = 1, needs = "staging deploy pipeline and the RPC error-code contract" }]
+
+[[epic]]
+id = 3
+slug = "epic-prize-desk"
+title = "Prize desk"
+covers = ["FR-13", "FR-14"]
+after = [{ epic = 1, needs = "the admin-auth check and audit_logs shape" }]
+
+[[epic]]
+id = 4
+slug = "epic-admin-dashboard"
+title = "Admin dashboard & ops"
+covers = ["FR-17", "FR-18", "FR-19", "FR-20"]
+after = [{ epic = 1, needs = "the admin-auth check, audit_logs shape and RPC error codes" }, { epic = 3, needs = "the admin shell UI" }]

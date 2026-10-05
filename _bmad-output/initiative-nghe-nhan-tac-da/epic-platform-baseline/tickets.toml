@@ -1,0 +1,99 @@
+[[entry]]
+id = 1
+type = "story"
+title = "Decide RPC error-code contract"
+description = "Records the stable §19 error codes every RPC and the UI use, reconciling the existing migrations."
+verify = "A written table of codes exists and every existing RPC's codes are on it."
+covers = []
+after = []
+hitl = true
+risk = "low"
+
+[[entry]]
+id = 2
+type = "story"
+title = "Decide admin-auth check"
+description = "Records how the app and RPCs determine an admin (admin_roles) and what the PRD's default 'player' role means."
+verify = "The rule is written and the existing admin RPCs follow it."
+covers = []
+after = []
+hitl = true
+risk = "low"
+
+[[entry]]
+id = 3
+type = "story"
+title = "Decide audit_logs shape"
+description = "Settles the §17 vs §18 AuditLog conflict into one shape all audited actions use."
+verify = "The shape is written and matches the audit_logs table or a migration is listed."
+covers = []
+after = []
+hitl = true
+risk = "low"
+
+[[entry]]
+id = 4
+type = "story"
+title = "Staging environment (tracer bullet)"
+description = "git init the repo, create the missing Supabase project as staging, push migrations, configure Google OAuth, and deploy web to a Vercel preview linked to staging."
+verify = "One Google account plays all 12 questions on iOS Safari and Android Chrome against staging."
+covers = []
+after = []
+hitl = true
+risk = "medium"
+
+[[entry]]
+id = 5
+type = "story"
+title = "Production environment"
+description = "Links the existing Supabase project as production, pushes migrations, and sets up the Vercel production deploy."
+verify = "vercel --prod serves the game and a Google sign-in works in production."
+covers = []
+after = [4]
+hitl = true
+risk = "medium"
+unknown = "Confirm the existing Supabase project is meant to be production, not staging."
+
+[[entry]]
+id = 9
+type = "story"
+title = "CI/CD auto deploy"
+description = "GitHub repo with Vercel Git integration (branch -> staging preview, main -> production) and a GitHub Actions workflow that runs smoke tests and supabase db push to staging, then production on main."
+verify = "A push to a branch deploys web and migrations to staging; a merge to main deploys both to production with no manual step."
+covers = []
+after = [4, 5]
+hitl = true
+risk = "medium"
+
+[[entry]]
+id = 6
+type = "story"
+title = "RPC rate limits and correlation IDs"
+description = "Adds per-user rate limits and a request correlation ID to RPCs in one migration plus a small client change (PRD §21)."
+verify = "A smoke test burst gets the rate-limit error code and logs carry the request ID."
+covers = []
+after = [1]
+hitl = false
+risk = "medium"
+
+[[entry]]
+id = 7
+type = "story"
+title = "Backups and alerts"
+description = "Enables daily backups and an error-rate alert on both Supabase projects (PRD §21)."
+verify = "A backup is listed in each dashboard and a test alert fires."
+covers = []
+after = [5]
+hitl = true
+risk = "low"
+
+[[entry]]
+id = 8
+type = "story"
+title = "Refactor sweep"
+description = "Cleanup only, scoped at start from the plans and deferred review findings of this epic."
+verify = "Smoke tests pass after the sweep."
+covers = []
+after = [1, 2, 3, 4, 5, 6, 7, 9]
+hitl = false
+risk = "low"
