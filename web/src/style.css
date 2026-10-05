@@ -56,7 +56,9 @@ h2 { font-size: 1.05rem; margin: 0; }
    Mỗi lớp FX là hộp chưa xoay, căn tâm theo hộp Figma; canvas FX 390×394 ở đỉnh khung. */
 .mascot { position: relative; height: 255px; }
 .stone { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; animation: fade-in .25s ease-out; }
-.fx { position: absolute; pointer-events: none; opacity: 0; max-width: none; object-fit: contain; animation: 1.4s ease-in-out both; }
+/* longhand: lightningcss (minify khi build) thu gọn shorthand không có tên `animation: 1.4s … both` thành `animation: none` */
+.fx { position: absolute; pointer-events: none; opacity: 0; max-width: none; object-fit: contain;
+  animation-duration: 1.4s; animation-timing-function: ease-in-out; animation-fill-mode: both; }
 .pile { animation-name: fx-pile; }
 .debris-a { animation-name: fx-debris-a; }
 .debris-b { animation-name: fx-debris-b; }
@@ -91,7 +93,7 @@ h2 { font-size: 1.05rem; margin: 0; }
 /* sổ lật — Figma 20:295 / 21:143: nền vẽ tay 350×340 @ y-14 (SVG tràn 388.53×369.29) */
 .notebook { position: relative; width: 350px; height: 326px; }
 .nb-bg { position: absolute; left: -19.29px; top: -14px; width: 388.53px; height: 369.29px; max-width: none; pointer-events: none; }
-.paper { position: relative; padding: 44px 24px 0 22px; font-family: var(--hand); color: #263d30; }
+.paper { position: relative; height: 326px; padding: 44px 24px 15px 22px; overflow: hidden; font-family: var(--hand); color: #263d30; }
 .paper:has(.nb-explain) { padding-top: 42px; }
 .paper p { margin: 0; }
 .q { font-size: 23px; line-height: 26px; min-height: 52px; }
@@ -105,6 +107,14 @@ h2 { font-size: 1.05rem; margin: 0; }
 .paper .nb-wrong + .nb-right { margin-top: 18px; }
 .paper .nb-right.ok { color: #247347; margin: 27px 0 42px; }
 .paper .nb-explain { margin-top: 24px; }
+/* nội dung dài hơn khung Figma (4 đáp án, dòng xuống hàng): bỏ bớt khoảng trống trước khi thu nhỏ */
+.tight .q + [role="radiogroup"] { margin-top: 10px; }
+.tight .nb-opt { min-height: 42px; padding-top: 6px; }
+.tight .box { top: 9px; }
+.paper .tight .nb-wrong, .paper .tight .nb-right.ok { margin-top: 12px; }
+.paper .tight .nb-right.ok { margin-bottom: 12px; }
+.paper .tight .nb-wrong + .nb-right { margin-top: 8px; }
+.paper .tight .nb-explain { margin-top: 12px; }
 
 /* xé trang: mép răng cưa chạy từ trên xuống (Figma 11 mốc 0–100%, ~0,8s) */
 @property --tear { syntax: '<percentage>'; inherits: true; initial-value: 0%; }

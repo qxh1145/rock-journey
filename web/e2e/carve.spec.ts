@@ -15,6 +15,8 @@ test('carve plays on even answers to stage 3/7 at Q4, and a reload does not repl
       // CAP-5: câu chẵn → chuỗi đục chạy, xong thì lên hình thái n/2 + 1
       if (n % 2 === 0) {
         await expect(page.locator('.mascot.carving')).toBeVisible()
+        // FX phải thật sự chạy trên bản build (minify từng gộp animation thành `none`)
+        await expect(page.locator('.fx.hammer')).toHaveCSS('opacity', '1')
         await expect(page.locator('.mascot.carving')).toHaveCount(0)
       } else {
         await expect(page.locator('.mascot.carving')).toHaveCount(0)
