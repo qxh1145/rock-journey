@@ -160,3 +160,14 @@ h2 { font-size: 1.05rem; margin: 0; }
   .tear.piece { clip-path: none; animation: swap .2s ease-out forwards !important; }
 }
 @keyframes swap { to { opacity: 0; } }
+
+/* showcase (CAP-9) */
+.showcase { text-align: center; }
+.showcase .eyebrow { font-size: .8rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin: 0; }
+.showcase-copy { animation: fade-in .4s ease-out; }
+.showcase-mascot { border-radius: 50%; background: radial-gradient(circle, #fff8e6 55%, transparent 70%); }
+.shelves { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.shelf { display: flex; flex-direction: column; align-items: center; gap: 4px; font-size: .85rem; opacity: 0; transform: translateY(8px); transition: opacity .4s, transform .4s; }
+.shelf img { width: 100%; height: auto; }
+.shelf-tuong { grid-column: 1 / -1; }
+.showcase[data-step="2"] .shelf, .showcase[data-step="3"] .shelf { opacity: 1; transform: none; }
