@@ -13,6 +13,8 @@ import { MusicSheet } from './components/MusicSheet'
 import { StartScreen } from './screens/StartScreen'
 import { PlayScreen } from './screens/PlayScreen'
 import { ResultScreen } from './screens/ResultScreen'
+
+const REPLAY_EMAIL = 'quandeptraixuhue@gmail.com'
 import './style.css'
 
 function App() {
@@ -101,6 +103,16 @@ function App() {
     setError('')
     const { error: e } = await supabase.auth.signInWithOAuth({ provider: 'google', options: { redirectTo: window.location.origin } })
     if (e) setError(e.message)
+  }
+
+  // chỉ ẩn/hiện nút; quyền thật do RPC replay_session kiểm tra email ở server
+  const canReplay = user?.email?.toLowerCase() === REPLAY_EMAIL
+  async function replay() {
+    const r = await callRpc('replay_session')
+    if (!r.ok) { setError(r.message ?? 'Không thể chơi lại.'); return setScreen('error') }
+    setAnsweredQuestion(null)
+    setSelected(null)
+    reload()
   }
 
   async function signOut() {
@@ -201,7 +213,8 @@ function App() {
         onCarved={() => setCarving(null)} onTearEnd={() => setTorn(null)} />}
 
       {screen === 'result' && game && <ResultScreen game={game} topBar={topBar}
-        onShowMedal={() => { setBadgeOpen(true); sfx.play('badge') }} onSignOut={() => void signOut()} />}
+        onShowMedal={() => { setBadgeOpen(true); sfx.play('badge') }} onSignOut={() => void signOut()}
+        onReplay={canReplay ? () => void replay() : undefined} />}
 
       {screen === 'error' && <main className="screen">
         <p className="error" role="alert">{error || 'Có lỗi xảy ra.'}</p>
