@@ -6,6 +6,7 @@ test('carve plays on even answers to stage 3/7 at Q4, and a reload does not repl
   try {
     await page.addInitScript(([key, value]) => localStorage.setItem(key, value), [`sb-${STAGING_REF}-auth-token`, JSON.stringify(session)])
     await page.goto('/')
+    await page.getByRole('button', { name: 'Bắt đầu' }).click()
     const stone = page.getByRole('img', { name: /^Tác phẩm: hình thái/ })
     for (let n = 1; n <= 4; n++) {
       await expect(page.getByText(`Câu ${n}/12`)).toBeVisible()
@@ -26,6 +27,7 @@ test('carve plays on even answers to stage 3/7 at Q4, and a reload does not repl
     }
 
     await page.reload()
+    await page.getByRole('button', { name: 'Tiếp tục câu 5' }).click()
     await expect(stone).toHaveAttribute('aria-label', 'Tác phẩm: hình thái 3/7')
     await expect(page.locator('.mascot.carving')).toHaveCount(0)
   } finally {

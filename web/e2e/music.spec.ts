@@ -27,6 +27,7 @@ test('music starts on first tap, sheet returns focus, track choice survives relo
     const playing = () => page.evaluate(() => (window as unknown as { music: HTMLMediaElement[] }).music.some((a) => !a.paused && a.src.includes('e2e-1')))
 
     await page.goto('/')
+    await page.getByRole('button', { name: 'Bắt đầu' }).click()
     await expect(page.getByText('Câu 1/12')).toBeVisible()
     await page.waitForTimeout(500)
     expect(await playing()).toBe(false)
@@ -45,6 +46,7 @@ test('music starts on first tap, sheet returns focus, track choice survives relo
     await expect(opener).toBeFocused()
 
     await page.reload()
+    await page.getByRole('button', { name: 'Tiếp tục câu 1' }).click()
     await opener.click()
     await expect(page.getByRole('radio', { name: 'Bài hai' })).toHaveAttribute('aria-checked', 'true')
     await page.keyboard.press('Escape')

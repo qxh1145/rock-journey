@@ -6,6 +6,7 @@ async function play(page: Page, run: () => Promise<void>) {
   try {
     await page.addInitScript(([key, value]) => localStorage.setItem(key, value), [`sb-${STAGING_REF}-auth-token`, JSON.stringify(session)])
     await page.goto('/')
+    await page.getByRole('button', { name: 'Bắt đầu' }).click()
     await expect(page.getByText('Câu 1/12')).toBeVisible()
     await run()
   } finally {

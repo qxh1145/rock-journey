@@ -9,6 +9,7 @@ async function finishGame(page: Page, run: () => Promise<void>) {
   try {
     await page.addInitScript(([key, value]) => localStorage.setItem(key, value), [`sb-${STAGING_REF}-auth-token`, JSON.stringify(session)])
     await page.goto('/')
+    await page.getByRole('button', { name: 'Bắt đầu' }).click()
     for (let n = 1; n <= 12; n++) {
       await expect(page.getByText(`Câu ${n}/12`)).toBeVisible()
       await page.getByRole('radio').first().click()

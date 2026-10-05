@@ -16,6 +16,7 @@ import { ResultScreen } from './screens/ResultScreen'
 import { ShowcaseScreen } from './screens/ShowcaseScreen'
 
 const REPLAY_EMAIL = 'quandeptraixuhue@gmail.com'
+const NETWORK_ERROR = 'Không có kết nối mạng. Kiểm tra mạng rồi thử lại.'
 import './style.css'
 
 function App() {
@@ -41,30 +42,49 @@ function App() {
   // undefined = chưa nhận INITIAL_SESSION; null = khách → lần đầu luôn route
   const activeUserId = useRef<string | null | undefined>(undefined)
 
+  const [canRetry, setCanRetry] = useState(true)
+  const fail = (text: string, retry: boolean) => { setError(text); setCanRetry(retry); setScreen('error') }
+
+  // mọi thông báo cho người chơi lúc khởi động đi qua rpcAction — chỉ rẽ nhánh theo code
+  const handleRpcError = useCallback((r: { code: string; message: string | null }, fallback: string) => {
+    const action = rpcAction(r.code)
+    if (action === 'signin') { setError('Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.'); return void supabase?.auth.signOut() }
+    fail(r.message ?? fallback, action !== 'show')
+  }, [])
+
   const loadCurrentRoute = useCallback(async () => {
     if (!supabase) return setScreen('setup')
     const { data: { session }, error: sessionError } = await supabase.auth.getSession()
     if (sessionError) throw sessionError
     setUser(session?.user ?? null)
     if (!session) { setGame(null); return setScreen('landing') }
+    setError('')
     setScreen('loading')
     const r = await callRpc<GameState>('get_current_session')
-    if (!r.ok) throw new Error(r.message ?? 'Không tải được lượt chơi.')
-    if (r.code === 'NONE') {
-      // landing đã nói luật → bắt đầu luôn sau khi đăng nhập
-      const s = await callRpc<GameState>('start_session')
-      if (!s.data) throw new Error(s.message ?? 'Không thể bắt đầu lượt chơi.')
-      setGame(s.data)
-      return setScreen(s.data.status === 'COMPLETED' ? 'result' : 'playing')
-    }
-    if (!r.data) throw new Error('Máy chủ chưa trả về trạng thái lượt chơi.')
-    setGame(r.data)
-    setScreen(r.data.status === 'COMPLETED' ? 'result' : 'playing')
-  }, [])
+    if (!r.ok) return handleRpcError(r, 'Không tải được lượt chơi.')
+    setGame(r.code === 'NONE' ? null : r.data)
+    // FR-11: đã hoàn thành → vào thẳng kết quả; còn lại luôn qua màn bắt đầu
+    setScreen(r.code === 'COMPLETED' && r.data ? 'result' : 'landing')
+  }, [handleRpcError])
 
   const reload = useCallback(() => {
-    void loadCurrentRoute().catch((e: unknown) => { setError(message(e)); setScreen('error') })
+    void loadCurrentRoute().catch(() => fail(NETWORK_ERROR, true))
   }, [loadCurrentRoute])
+
+  const starting = useRef(false)
+  async function start() {
+    if (game) return setScreen('playing')
+    if (starting.current) return
+    starting.current = true
+    const s = await callRpc<GameState>('start_session').catch(() => null).finally(() => { starting.current = false })
+    if (!s) return fail(NETWORK_ERROR, true)
+    if (!s.ok || !s.data) {
+      if (rpcAction(s.code) === 'reload') return reload()
+      return handleRpcError(s, 'Không thể bắt đầu lượt chơi.')
+    }
+    setGame(s.data)
+    setScreen(s.data.status === 'COMPLETED' ? 'result' : 'playing')
+  }
 
   useEffect(() => {
     if (!supabase) return setScreen('setup')
@@ -118,6 +138,7 @@ function App() {
 
   async function signOut() {
     setMenuOpen(false)
+    setError('')
     await supabase?.auth.signOut()
   }
 
@@ -206,7 +227,9 @@ function App() {
       {screen === 'setup' && <main className="screen"><h1>Nghệ nhân tạc đá</h1>
         <p>Thêm <code>VITE_SUPABASE_URL</code> và <code>VITE_SUPABASE_KEY</code> vào <code>.env.local</code>.</p></main>}
 
-      {screen === 'landing' && <StartScreen error={error} onSignIn={() => void signIn()} />}
+      {screen === 'landing' && <StartScreen error={error}
+        cta={!user ? 'Đăng nhập bằng Google' : game?.status === 'IN_PROGRESS' ? `Tiếp tục câu ${game.answered_count + 1}` : 'Bắt đầu'}
+        onCta={() => void (user ? start() : signIn())} />}
 
       {screen === 'playing' && game && <PlayScreen game={game} answeredQuestion={answeredQuestion} selected={selected}
         submitting={submitting} waitingSync={waitingSync} statusMessage={statusMessage} carving={carving} torn={torn} topBar={topBar}
@@ -216,15 +239,18 @@ function App() {
       {screen === 'showcase' && <ShowcaseScreen onDone={() => setScreen('result')} />}
 
       {screen === 'result' && game && <ResultScreen game={game} topBar={topBar}
-        onShowMedal={() => { setBadgeOpen(true); sfx.play('badge') }} onSignOut={() => void signOut()}
+        onShowMedal={() => { setBadgeOpen(true); sfx.play('badge') }}
         onReplay={canReplay ? () => void replay() : undefined} />}
 
       {screen === 'error' && <main className="screen">
         <p className="error" role="alert">{error || 'Có lỗi xảy ra.'}</p>
-        <div className="bottom"><button className="primary" onClick={reload}>Thử lại</button></div>
+        <div className="bottom">
+          {canRetry && <button className="primary" onClick={reload}>Thử lại</button>}
+          {user && <button className="link" onClick={() => void signOut()}>Đăng xuất</button>}
+        </div>
       </main>}
 
-      {menuOpen && <AvatarMenu user={user} onSignOut={() => void signOut()} />}
+      {menuOpen && <AvatarMenu onSignOut={() => void signOut()} />}
 
       {musicOpen && <MusicSheet music={music} tracks={tracks} onClose={() => setMusicOpen(false)} />}
 

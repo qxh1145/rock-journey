@@ -1,6 +1,6 @@
 import { Mascot } from '../components/Mascot'
 
-export function StartScreen({ error, onSignIn }: { error: string; onSignIn: () => void }) {
+export function StartScreen({ error, cta, onCta }: { error: string; cta: string; onCta: () => void }) {
   return <main className="screen">
     <p className="eyebrow">NGHỆ NHÂN TẠC ĐÁ</p>
     <h1>Từ khối đá thô,<br />đến một tác phẩm.</h1>
@@ -12,6 +12,6 @@ export function StartScreen({ error, onSignIn }: { error: string; onSignIn: () =
       <li>Mỗi tài khoản chỉ được làm bài 1 lần</li>
     </ul>
     {error && <p className="error" role="alert">{error}</p>}
-    <div className="bottom"><button className="primary" onClick={onSignIn}>Đăng nhập bằng Google</button></div>
+    <div className="bottom"><button className="primary" onClick={onCta}>{cta}</button></div>
   </main>
 }
