@@ -213,7 +213,7 @@ function App() {
         onSelect={setSelected} onSubmit={() => void submitAnswer()} onNext={next}
         onCarved={() => setCarving(null)} onTearEnd={() => setTorn(null)} />}
 
-      {screen === 'showcase' && <ShowcaseScreen topBar={topBar} onDone={() => setScreen('result')} />}
+      {screen === 'showcase' && <ShowcaseScreen onDone={() => setScreen('result')} />}
 
       {screen === 'result' && game && <ResultScreen game={game} topBar={topBar}
         onShowMedal={() => { setBadgeOpen(true); sfx.play('badge') }} onSignOut={() => void signOut()}

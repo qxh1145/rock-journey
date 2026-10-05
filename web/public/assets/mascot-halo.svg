@@ -1,0 +1,9 @@
+<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="200" height="200" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+<circle id="Mascot halo" cx="100" cy="100" r="100" fill="url(#paint0_radial_0_5)"/>
+<defs>
+<radialGradient id="paint0_radial_0_5" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(100 100) scale(100)">
+<stop stop-color="#DBF0EB"/>
+<stop offset="1" stop-color="#DBF0EB" stop-opacity="0"/>
+</radialGradient>
+</defs>
+</svg>

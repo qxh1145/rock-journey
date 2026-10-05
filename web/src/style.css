@@ -161,13 +161,28 @@ h2 { font-size: 1.05rem; margin: 0; }
 }
 @keyframes swap { to { opacity: 0; } }
 
-/* showcase (CAP-9) */
-.showcase { text-align: center; }
-.showcase .eyebrow { font-size: .8rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin: 0; }
-.showcase-copy { animation: fade-in .4s ease-out; }
-.showcase-mascot { border-radius: 50%; background: radial-gradient(circle, #fff8e6 55%, transparent 70%); }
-.shelves { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-.shelf { display: flex; flex-direction: column; align-items: center; gap: 4px; font-size: .85rem; opacity: 0; transform: translateY(8px); transition: opacity .4s, transform .4s; }
-.shelf img { width: 100%; height: auto; }
-.shelf-tuong { grid-column: 1 / -1; }
-.showcase[data-step="2"] .shelf, .showcase[data-step="3"] .shelf { opacity: 1; transform: none; }
+/* showcase (CAP-9) — Figma 74:1062/1074/1086/1049, khung 390×844 */
+.showcase { padding-top: 28px; gap: 0; text-align: center; --ease: cubic-bezier(0, 0, .58, 1); }
+.showcase-copy, .showcase-halo, .showcase-mascot, .shelf, .showcase-cta {
+  transition: opacity var(--dur) var(--ease), transform var(--dur) var(--ease); }
+.showcase-eyebrow { margin: 0; line-height: 1rem; color: #245c46; font-size: .8125rem; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; }
+.showcase h1 { margin: 8px auto 0; max-width: 350px; font-size: 1.625rem; line-height: 2.0625rem; letter-spacing: 0; }
+.showcase-hero { position: relative; height: 200px; margin-top: 14px; }
+.showcase-halo { position: absolute; left: calc(50% - 100px); top: 0; }
+.showcase-mascot { position: absolute; left: calc(50% - 115px); top: 10px; width: 230px; height: 183px; object-fit: contain; }
+.showcase-body { margin: 2px auto 0; max-width: 318px; color: #636366; font-size: .9375rem; line-height: 1.375rem; }
+.shelves { position: relative; list-style: none; padding: 0; margin: 24px -20px 0; aspect-ratio: 390 / 336; }
+.shelf { position: absolute; }
+.shelf img { display: block; width: 100%; height: 100%; object-fit: contain; }
+.shelf-my-nghe { left: 10.26%; top: 0; width: 38.46%; height: 21.43%; }
+.shelf-non-bo { left: 52.56%; top: 12.5%; width: 43.59%; height: 19.35%; }
+.shelf-dieu-khac { left: 3.85%; top: 29.76%; width: 44.87%; height: 25.6%; }
+.shelf-tuong { left: 6.41%; top: 61.9%; width: 87.18%; height: 38.1%; }
+.showcase-cta { margin-top: 28px; color: #245c46; font-size: 1.0625rem; font-weight: 600; }
+/* bước 0: chỉ mascot lớn ở giữa; chữ lệch xuống 14px, kệ 32px, nút 16px */
+.showcase[data-step="0"] .showcase-copy { opacity: 0; transform: translateY(14px); }
+.showcase[data-step="0"] .showcase-halo { transform: translateY(180px) scale(1.4); }
+.showcase[data-step="0"] .showcase-mascot { transform: translateY(182px) scale(1.26); }
+.shelf[data-on="false"] { opacity: 0; transform: translateY(32px); }
+.showcase:not([data-step="3"]) .showcase-cta { opacity: 0; transform: translateY(16px); }
+@media (prefers-reduced-motion: reduce) { .showcase * { transition: none !important; } }

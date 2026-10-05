@@ -34,9 +34,9 @@ test('showcase plays 4 states after Q12, its CTA opens the result, and a reload 
     await expect(showcase(page)).toBeVisible()
     const shownAt = Date.now()
     for (const step of ['0', '1', '2', '3']) await expect(showcase(page)).toHaveAttribute('data-step', step, { timeout: 3000 })
-    expect(Date.now() - shownAt).toBeLessThan(6500) // AC: ends on the last state within ~6s
-    await expect(page.getByRole('heading', { name: 'Từ đá thô đến tác phẩm' })).toBeVisible()
-    await page.getByRole('button', { name: 'Xem kết quả & nhận quà' }).click()
+    expect(Date.now() - shownAt).toBeLessThan(6500) // AC: ends on the last state within ~6s (Figma flow: ~2.5s)
+    await expect(page.getByRole('heading', { name: 'Từ một khối đá, có thể tạo nên bao nhiêu điều?' })).toBeVisible()
+    await page.getByRole('button', { name: 'Xem kết quả và nhận quà' }).click()
     await expect(result(page)).toBeVisible()
 
     await page.reload()
@@ -48,7 +48,7 @@ test('showcase plays 4 states after Q12, its CTA opens the result, and a reload 
 test('CTA tapped mid-animation opens the result and the showcase does not come back', async ({ page }) => {
   await finishGame(page, async () => {
     await expect(showcase(page)).toBeVisible()
-    await page.getByRole('button', { name: 'Xem kết quả & nhận quà' }).click()
+    await page.getByRole('button', { name: 'Xem kết quả và nhận quà' }).click()
     await expect(result(page)).toBeVisible()
     await page.waitForTimeout(4000)
     await expect(showcase(page)).toHaveCount(0)
