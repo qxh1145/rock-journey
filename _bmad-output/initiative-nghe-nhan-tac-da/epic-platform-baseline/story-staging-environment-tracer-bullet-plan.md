@@ -8,9 +8,9 @@ baseline_revision: '1de96b4975aca78447cd4a4a4cef029694896d3e'
 route: 'oneshot'
 route_source: 'auto'
 risk: 'medium'
-review: ''
-review_source: ''
-lenses_ran: []
+review: 'quick'
+review_source: 'pinned'
+lenses_ran: ['quick']
 review_loop_iteration: 0
 context: ['{project-root}/web/README.md', '{project-root}/supabase/config.toml']
 ---
@@ -52,3 +52,17 @@ Steps (human-in-the-loop, outward-facing):
 - Vercel project `rock-journey` linked in `web/` (`web/.gitignore` gained `.vercel`, `.env*` from `vercel link`). Preview env: `VITE_SUPABASE_URL`, `VITE_SUPABASE_KEY` (publishable, `--type config`; Vercel refuses Secret type for `VITE_`).
 - Surprise: the first `vercel deploy` of a new project went to Production (`rock-journey.vercel.app`) with no prod env vars, so it shows the missing-env screen. Story 5 owns production; redeploy there.
 - Preview: `https://rock-journey-cvi0voprh-qxh1145s-projects.vercel.app` returns 302 (Vercel Deployment Protection), so phones need protection off for previews or a shareable link.
+- Fix during verify: signed-out visitors stuck on "Đang tải hành trình…" (`activeUserId` started at `null`, so INITIAL_SESSION null was skipped). Sentinel `undefined` in `web/src/main.tsx:71` (cd7cdaf). New preview `https://rock-journey-gb4zbzeoq-qxh1145s-projects.vercel.app`, protection off.
+- Verify passed: user played 12 questions with one Google account on iOS Safari and Android Chrome (2026-10-05). Animation polish deferred.
+
+## Review Triage Log
+
+Pass 1 (quick): high 1, medium 0, low 3, false 4.
+- high — HALT: staging redirect allow-list `https://*.vercel.app/**` lets any Vercel-hosted origin receive OAuth tokens (implicit flow, `redirectTo: window.location.origin`). Fix is a dashboard change to `https://*-qxh1145s-projects.vercel.app/**`; needs the user.
+- false: preview returns 302 — now 200 after protection was turned off (curl checked).
+- false: manual phone check not done — user confirmed it passed.
+- false: main.tsx fix out of scope — the bug blocked this story's verify; separate commit.
+- false: status still in-progress — consequence of the review timing, not a defect.
+- low — patched: `web/.gitignore` `.env*` would hide new `.env.*.example` templates; line removed (`.env.local` already listed).
+- low — deferred: unintended Production deploy at `rock-journey.vercel.app` with no env; story 5 redeploys production.
+- low — deferred: no README note that the CLI is linked to staging.
