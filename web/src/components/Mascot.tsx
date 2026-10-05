@@ -12,7 +12,7 @@ export function carveCaption(g: GameState, carvingFrom: Stage | null) {
   return `Tạc ${pct}% · Còn ${odd ? 1 : 2} câu nữa là đục tiếp`
 }
 
-// ảnh FX chỉ gắn vào DOM lúc đục → nếu không tải + giải mã trước, mạng di động lỡ mất máy xẻ/búa trong chuỗi 1,4s
+// ảnh FX chỉ gắn vào DOM lúc đục → nếu không tải + giải mã trước, mạng di động lỡ mất máy xẻ/búa trong chuỗi 2,8s
 const FX = ['saw', 'chisel', 'hammer', 'debris-1', 'debris-2', 'debris-3', 'dust-1', 'dust-2', 'dust-3', 'dust-4', 'sparkle', 'sparkle-2']
 const warm = new Map<string, HTMLImageElement>()
 function preload(src: string) {
@@ -37,12 +37,11 @@ export function Mascot({ stage, carving, onCarved, small }: {
     if (!carving) return
     setSwapped(false)
     const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches
-    // Figma 64:873–64:1363: máy xẻ 0–0.5s → đổi sang đục, búa gõ ở 0.6s & 0.85s, đổi hình 0.95s; reduced motion → fade ngắn
-    const hits = reduce ? [] : [window.setTimeout(() => sfx.play('saw'), 0),
-      ...[600, 850].map((t) => window.setTimeout(() => sfx.play('chisel'), t))]
-    const finish = stage === 'FINISHED' ? window.setTimeout(() => sfx.play('finish'), 900) : 0
-    const swap = window.setTimeout(() => setSwapped(true), reduce ? 0 : 950)
-    const done = window.setTimeout(() => onCarved?.(), reduce ? 250 : stage === 'FINISHED' ? 1600 : 1400)
+    // Figma 64:873–64:1363: phát upgrade-sfx lúc bắt đầu đục, đổi hình 1.9s; reduced motion → fade ngắn
+    const hits = reduce ? [] : [window.setTimeout(() => sfx.play('saw'), 0)]
+    const finish = stage === 'FINISHED' ? window.setTimeout(() => sfx.play('finish'), 1800) : 0
+    const swap = window.setTimeout(() => setSwapped(true), reduce ? 0 : 1900)
+    const done = window.setTimeout(() => onCarved?.(), reduce ? 250 : stage === 'FINISHED' ? 3200 : 2800)
     return () => [...hits, finish, swap, done].forEach(clearTimeout)
   }, [carving?.key]) // eslint-disable-line react-hooks/exhaustive-deps
 

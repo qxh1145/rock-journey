@@ -51,14 +51,14 @@ h2 { font-size: 1.05rem; margin: 0; }
 .track div { height: 100%; background: var(--green); border-radius: 1.5px; transition: width .4s; }
 .caption { text-align: center; color: var(--muted); font-size: 13px; line-height: 18px; margin: 0; }
 
-/* mascot + animation đục — Figma 64:873–64:1363: 11 khung 00..10 rải trên 1,4s ở 0/10/20/30/36/43/52/61/68/77/86%
-   (05 gõ búa 1 = 600ms, 07 gõ búa 2 = 850ms, 08 đổi hình = 950ms — khớp hẹn giờ SFX trong Mascot.tsx).
+/* mascot + animation đục — Figma 64:873–64:1363: 11 khung 00..10 rải trên 2,8s ở 0/10/20/30/36/43/52/61/68/77/86%
+   (05 gõ búa 1 = 1200ms, 07 gõ búa 2 = 1700ms, 08 đổi hình = 1900ms — khớp hẹn giờ SFX trong Mascot.tsx).
    Mỗi lớp FX là hộp chưa xoay, căn tâm theo hộp Figma; canvas FX 390×394 ở đỉnh khung. */
 .mascot { position: relative; height: 255px; }
 .stone { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; animation: fade-in .25s ease-out; }
 /* longhand: lightningcss (minify khi build) thu gọn shorthand không có tên `animation: 1.4s … both` thành `animation: none` */
 .fx { position: absolute; pointer-events: none; opacity: 0; max-width: none; object-fit: contain;
-  animation-duration: 1.4s; animation-timing-function: ease-in-out; animation-fill-mode: both; }
+  animation-duration: 2.8s; animation-timing-function: ease-in-out; animation-fill-mode: both; }
 .pile { animation-name: fx-pile; }
 .debris-a { animation-name: fx-debris-a; }
 .debris-b { animation-name: fx-debris-b; }
@@ -72,7 +72,7 @@ h2 { font-size: 1.05rem; margin: 0; }
 .ground-dust { animation-name: fx-ground-dust; }
 .sparkle { animation-name: fx-sparkle; }
 .sparkle-2 { animation-name: fx-sparkle-2; }
-.play .stone.shake { animation: shake 1.4s ease-in-out; }
+.play .stone.shake { animation: shake 2.8s ease-in-out; }
 @keyframes fade-in { from { opacity: 0; } }
 @keyframes fx-pile { 0%, 10%, 20%, 30%, 36%, 43%, 52%, 61%, 68% { left: 100px; top: 283.2px; width: 40px; height: 33.6px; opacity: 0; rotate: 0deg; } 77% { left: 26px; top: 304.4px; width: 92px; height: 77.3px; opacity: 1; rotate: 0deg; } 86% { left: 26px; top: 305.4px; width: 92px; height: 77.3px; opacity: 1; rotate: 0deg; } 100% { left: 26px; top: 305.4px; width: 92px; height: 77.3px; opacity: 0; rotate: 0deg; } }
 @keyframes fx-debris-a { 0%, 10%, 20% { left: 270px; top: 145.3px; width: 30px; height: 9.3px; opacity: 0; rotate: 0deg; } 30% { left: 260px; top: 142.7px; width: 60px; height: 18.6px; opacity: 1; rotate: 0deg; } 36% { left: 275px; top: 214.9px; width: 110px; height: 34.1px; opacity: 1; rotate: 20deg; } 43%, 52%, 61%, 68%, 77%, 86% { left: 295px; top: 329px; width: 110px; height: 34.1px; opacity: 1; rotate: 35deg; } 100% { left: 295px; top: 329px; width: 110px; height: 34.1px; opacity: 0; rotate: 35deg; } }

@@ -18,6 +18,7 @@ const BEEP: Record<Sfx, [number, number]> = {
 }
 const M = (f: string) => encodeURI(`/audio/music/${f}`)
 const SFX_URL: Partial<Record<Sfx, string>> = {
+  saw: M('upgrade-sfx.mp3'),
   correct: M('Duolingo Correct Sound Effect.mp3'),
   wrong: M('Duolingo Incorrect Answer sound effect.mp3'),
   finish: M('The Witcher 3： Wild Hunt ｜ Quest Completed ♪ [Sound Effect].mp3'),
