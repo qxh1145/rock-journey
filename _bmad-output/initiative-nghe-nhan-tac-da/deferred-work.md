@@ -32,3 +32,6 @@
 - source_plan: none
   summary: Admin dashboard operational alerts (§16A) for save/auth errors.
   evidence: Deferred at epic-admin-dashboard inception; §16A makes them conditional on telemetry, which does not exist.
+- source_plan: `_bmad-output/initiative-nghe-nhan-tac-da/epic-prize-desk/story-admin-shell-and-email-lookup-tracer-plan.md`
+  summary: Add `<origin>/admin` (staging + prod) to Supabase Auth allowed redirect URLs so admin sign-in returns to /admin.
+  evidence: Unverified (medium): AdminApp signIn uses redirectTo origin+'/admin'; previously only origin was used. Settle by checking Supabase Auth URL configuration.
