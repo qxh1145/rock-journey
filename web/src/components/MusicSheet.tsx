@@ -2,7 +2,9 @@ import { useEffect, useRef, type CSSProperties } from 'react'
 import { type useMusic, type Track } from '../audio'
 
 export function MusicSheet({ music, tracks, onClose }: { music: ReturnType<typeof useMusic>; tracks: Track[]; onClose: () => void }) {
-  const idx = Math.max(0, tracks.findIndex((t) => t.asset_url === music.track))
+  const idx = tracks.findIndex((t) => t.asset_url === music.track)
+  // bài mặc định / bài kết không nằm trong playlist → lấy tên từ file đang phát
+  const title = idx >= 0 ? tracks[idx].title : music.track ? decodeURI(music.track).split('/').pop()!.replace(/\.mp3$/i, '') : tracks[0].title
   const ref = useRef<HTMLElement>(null)
   const close = useRef(onClose)
   close.current = onClose
@@ -28,10 +30,10 @@ export function MusicSheet({ music, tracks, onClose }: { music: ReturnType<typeo
       <div className="grabber" aria-hidden="true" />
       <div className="sheet-head"><h2>Nhạc nền</h2><button className="ghost-btn" onClick={onClose}>Xong</button></div>
       {tracks.length === 0 ? <p className="muted">Chưa có bài nhạc nào.</p> : <>
-        <h3>{tracks[idx].title}</h3>
-        <p className="muted">Nghệ nhân tạc đá · Bài {idx + 1} / {tracks.length}</p>
+        <h3>{title}</h3>
+        <p className="muted">Nghệ nhân tạc đá{idx >= 0 && ` · Bài ${idx + 1} / ${tracks.length}`}</p>
         <div className="transport">
-          <button aria-label="Bài trước" onClick={() => music.select(tracks[(idx - 1 + tracks.length) % tracks.length].asset_url)}>⏮</button>
+          <button aria-label="Bài trước" onClick={() => music.select(tracks[(idx > 0 ? idx : tracks.length) - 1].asset_url)}>⏮</button>
           <button className="play" aria-label={music.playing ? 'Tạm dừng' : 'Phát'} onClick={music.toggle}>{music.playing ? '⏸' : '▶'}</button>
           <button aria-label="Bài sau" onClick={() => music.select(tracks[(idx + 1) % tracks.length].asset_url)}>⏭</button>
         </div>
