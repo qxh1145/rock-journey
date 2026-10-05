@@ -6,16 +6,18 @@ export type TopBarProps = {
   menuOpen: boolean
   onToggleMenu: () => void
   onOpenMusic: () => void
+  musicTitle: string
 }
 
-export function TopBar({ title, user, menuOpen, onToggleMenu, onOpenMusic }: TopBarProps) {
+export function TopBar({ title, user, menuOpen, onToggleMenu, onOpenMusic, musicTitle }: TopBarProps) {
   return (
     <header className="top">
       <button className="avatar" aria-label="Tài khoản" aria-expanded={menuOpen} onClick={onToggleMenu}>
         {user?.user_metadata?.avatar_url ? <img src={user.user_metadata.avatar_url} alt="" /> : <img className="avatar-default" src="/assets/avatar.svg" alt="" />}
       </button>
       <strong className="top-title">{title}</strong>
-      <button className="ghost" onClick={(e) => { e.currentTarget.focus(); onOpenMusic() }}>Đổi nhạc <span aria-hidden="true">♪</span></button>
+      <button className="ghost" aria-label={`Đổi nhạc: ${musicTitle}`} onClick={(e) => { e.currentTarget.focus(); onOpenMusic() }}>
+        <span className="name">{musicTitle || 'Đổi nhạc'}</span> <span aria-hidden="true">♪</span></button>
     </header>
   )
 }

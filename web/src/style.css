@@ -40,6 +40,7 @@ h2 { font-size: 1.05rem; margin: 0; }
 .avatar .avatar-default { width: 44px; height: 44px; border-radius: 0; }
 .ghost { display: flex; align-items: center; gap: 8px; border: 0; background: #fff; border-radius: 22px; min-height: 44px; padding: 0 10px; color: var(--green); font-size: 14px; font-weight: 600; }
 .ghost span { font-size: 22px; }
+.ghost .name { font-size: 14px; max-width: 96px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .track { height: 3px; background: #d1d1d6; border-radius: 1.5px; }
 .track div { height: 100%; background: var(--green); border-radius: 1.5px; transition: width .4s; }
 .caption { text-align: center; color: var(--muted); font-size: 13px; line-height: 18px; margin: 0; }
