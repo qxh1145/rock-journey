@@ -409,7 +409,7 @@ Ràng buộc nghiệp vụ: chỉ một answer cho mỗi cặp (`sessionId`, `qu
 
 ### `AuditLog`
 
-`auditId`, `actorId`, `action`, `sessionId`, `before`, `after`, `createdAt`, `requestId`, `metadata`. Áp dụng tối thiểu cho ghi nhận quà và thay đổi quản trị.
+`auditId`, `actorId`, `action`, `sessionId`, `before`, `after`, `createdAt`, `requestId`, `metadata`. Áp dụng tối thiểu cho ghi nhận quà và thay đổi quản trị. Shape chốt theo bảng `audit_logs` §18: [docs/audit-logs.md](docs/audit-logs.md).
 
 ### `AdminRole`
 
