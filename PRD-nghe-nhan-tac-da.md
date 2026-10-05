@@ -298,7 +298,7 @@ Nhạc nền và sound effects là thành phần bắt buộc nhằm tạo khôn
 ### Admin
 
 - Admin đăng nhập bằng Google qua Supabase Auth; quyền nội bộ được cấp độc lập trong bảng `admin_roles`, không dựa riêng vào việc tài khoản đã đăng nhập Google.
-- Chỉ có một role nội bộ là `admin` (`admin_roles.role` chỉ cho phép `'admin'`): tra cứu người chơi theo email, ghi nhận trao quà, CRUD trong phạm vi quản trị, theo dõi dashboard, xem thông tin người dùng và xuất báo cáo.
+- Chỉ có một role nội bộ là `admin` (`admin_roles.role` chỉ cho phép `'admin'`): tra cứu người chơi theo email, ghi nhận trao quà, CRUD trong phạm vi quản trị, theo dõi dashboard, xem thông tin người dùng và xuất báo cáo. Quy tắc kiểm tra: [docs/admin-auth.md](docs/admin-auth.md).
 - Admin không được sửa/xóa câu trả lời đã chốt hay điểm tính từ câu trả lời. Việc ghi nhận đã trao quà phải kiểm tra điều kiện, thực hiện nguyên tử, chỉ một lần và được audit (người thao tác, thời điểm).
 - Admin CRUD dữ liệu người dùng phải tuân thủ quy tắc bất biến: không sửa câu trả lời đã chốt hoặc điểm tính từ câu trả lời; muốn xử lý sai sót phải dùng quy trình điều chỉnh có lý do, lưu giá trị trước/sau và người thao tác. Không xóa vật lý dữ liệu lượt/câu trả lời đã hoàn thành; dùng soft delete/anonymize theo chính sách lưu trữ.
 - Thao tác admin như sửa câu hỏi cho phiên bản tương lai, cập nhật playlist, khóa tài khoản, ẩn/khôi phục hồ sơ, điều chỉnh trạng thái trao quà và xuất dữ liệu đều được ghi vào audit log.
