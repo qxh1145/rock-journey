@@ -13,6 +13,7 @@ import { MusicSheet } from './components/MusicSheet'
 import { StartScreen } from './screens/StartScreen'
 import { PlayScreen } from './screens/PlayScreen'
 import { ResultScreen } from './screens/ResultScreen'
+import { ShowcaseScreen } from './screens/ShowcaseScreen'
 
 const REPLAY_EMAIL = 'quandeptraixuhue@gmail.com'
 import './style.css'
@@ -188,7 +189,7 @@ function App() {
 
   function next(feedbackPage: ReactNode) {
     if (!game) return
-    if (game.status === 'COMPLETED') { music.finish(); return setScreen('result') }
+    if (game.status === 'COMPLETED') { music.finish(); return setScreen('showcase') }
     if (game.answer && feedbackPage) { setTorn({ key: game.answer.answer_id, node: feedbackPage }); sfx.play('tear') }
     setGame({ ...game, answer: undefined })
     setSelected(null)
@@ -211,6 +212,8 @@ function App() {
         submitting={submitting} waitingSync={waitingSync} statusMessage={statusMessage} carving={carving} torn={torn} topBar={topBar}
         onSelect={setSelected} onSubmit={() => void submitAnswer()} onNext={next}
         onCarved={() => setCarving(null)} onTearEnd={() => setTorn(null)} />}
+
+      {screen === 'showcase' && <ShowcaseScreen topBar={topBar} onDone={() => setScreen('result')} />}
 
       {screen === 'result' && game && <ResultScreen game={game} topBar={topBar}
         onShowMedal={() => { setBadgeOpen(true); sfx.play('badge') }} onSignOut={() => void signOut()}

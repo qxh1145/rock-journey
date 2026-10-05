@@ -1,6 +1,6 @@
 import { supabase } from './lib/supabase'
 
-export type Screen = 'loading' | 'landing' | 'playing' | 'result' | 'error' | 'setup'
+export type Screen = 'loading' | 'landing' | 'playing' | 'showcase' | 'result' | 'error' | 'setup'
 export type Stage = 'RAW' | 'CARVED_1' | 'CARVED_2' | 'CARVED_3' | 'CARVED_4' | 'CARVED_5' | 'FINISHED'
 export type Option = { id: string; text: string }
 export type Question = { question_id: string; index: number; prompt: string; options: Option[] }
