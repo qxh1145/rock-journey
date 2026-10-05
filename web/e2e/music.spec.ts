@@ -44,6 +44,7 @@ test('music starts on first tap, sheet returns focus, track choice survives relo
     await sheet.getByRole('button', { name: 'Xong' }).click()
     await expect(sheet).toBeHidden()
     await expect(opener).toBeFocused()
+    await expect(opener).toHaveText(/Bài hai/)
 
     await page.reload()
     await page.getByRole('button', { name: 'Tiếp tục câu 1' }).click()
