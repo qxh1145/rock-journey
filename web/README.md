@@ -16,3 +16,12 @@ The local Supabase Auth `site_url` already uses port 3000. Configure Google OAut
 - `npm run typecheck` — TypeScript project check
 - `npm run build` — TypeScript check and production build
 - `npm run preview` — preview the production build
+
+## Environments
+
+| | Supabase project | Vercel |
+|---|---|---|
+| Staging | `rock-journey-staging` (`awvaujmkbstkpsbaxpku`) | Preview deploys (`vercel deploy`) |
+| Production | `rock-journey` (`xmkkkuepzhgcqpjbzrwe`) | `vercel --prod` → https://rock-journey.vercel.app |
+
+`supabase db push` goes to whichever project the CLI is linked to. From the repo root, run `cat supabase/.temp/project-ref` before pushing (missing = not linked), and switch with `supabase link --project-ref <ref>`.
