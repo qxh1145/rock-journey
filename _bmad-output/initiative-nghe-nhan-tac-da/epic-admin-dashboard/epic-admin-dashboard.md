@@ -39,3 +39,11 @@ Admin dashboard, CRUD and export within the admin shell from epic-prize-desk.
 - Waits on epic-platform-baseline because: needs admin-auth, audit_logs shape and error codes.
 - Waits on epic-prize-desk because: reuses its admin shell.
 - Source conflict: §19 — anonymize/lock action vs code with only players.locked.
+- Decision (2026-10-06): admin shell stays owned by epic-prize-desk; this epic's first story waits on it.
+- Decision (2026-10-06): schema gaps (players anonymize/soft-delete, question draft/archive) are closed by migrations inside the CRUD stories that need them, no spike.
+- Decision (2026-10-06): closing story is a Refactor sweep only; §23 admin e2e suite declined.
+- Decision (2026-10-06): tracer bullet is entry 1 (dashboard KPIs); it owns the shared filter shape and admin nav slot. Lanes after it: 2→3→4, 5, 6, 7, 8→9.
+- Decision (2026-10-06): Source conflict §19 anonymize/lock settled — players.locked stays the lock flag; anonymized_at/deleted_at added in entry 3.
+- Decision (2026-10-06): §16A dashboard alerts deferred until telemetry exists.
+- Decision (2026-10-06): admin_get_user_detail writes no read-audit row; only changes and exports are audited.
+- Decision (2026-10-06): exporting detailed answers needs only the admin's explicit opt-in, audited; no separate permission.
