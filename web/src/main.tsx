@@ -108,7 +108,7 @@ function App() {
   // chỉ ẩn/hiện nút; quyền thật do RPC replay_session kiểm tra email ở server
   const canReplay = user?.email?.toLowerCase() === REPLAY_EMAIL
   async function replay() {
-    const r = await callRpc('replay_session')
+    const r = await callRpc('replay_session').catch((e: unknown) => ({ ok: false, message: message(e, 'Không thể chơi lại.') }))
     if (!r.ok) { setError(r.message ?? 'Không thể chơi lại.'); return setScreen('error') }
     setAnsweredQuestion(null)
     setSelected(null)
