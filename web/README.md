@@ -28,6 +28,16 @@ Needs `npx playwright install chromium` once, plus env vars (never commit them):
 
 The app is built and served with `vite preview` against `awvaujmkbstkpsbaxpku` (URL is fixed in `playwright.config.ts`).
 
+### Load test
+
+`load/journey.k6.js` runs 30 concurrent throwaway players through the full game on **staging** (with a duplicate `start_session` race and a duplicate `submit_answer` race), then counts DB rows and deletes every user it created.
+
+1. `brew install k6` (k6 >= 0.48)
+2. Export `SUPABASE_ANON_KEY` (staging publishable/anon key) and `SUPABASE_STAGING_SERVICE_ROLE_KEY` (never commit them).
+3. From the repo root: `k6 run load/journey.k6.js`
+
+Pass = exit 0 with `checks` 100%, `lost_answers` 0, `dup_violations` 0. On failure, teardown logs the offending player ids; a human files them as backlog bugs from that output. Leftover users (aborted run) match `load-%@example.com`.
+
 ## Environments
 
 | | Supabase project | Vercel |
