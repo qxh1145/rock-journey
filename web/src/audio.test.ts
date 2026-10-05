@@ -1,5 +1,5 @@
-import { beforeEach, expect, test } from 'vitest'
-import { DEFAULT_PREFS, PREFS_KEY, loadPrefs, savePrefs } from './audio'
+import { beforeEach, expect, test, vi } from 'vitest'
+import { DEFAULT_PREFS, PREFS_KEY, loadPrefs, savePrefs, sfx } from './audio'
 
 const store = new Map<string, string>()
 globalThis.localStorage = {
@@ -22,4 +22,19 @@ test('saved choice round-trips and fills missing fields', () => {
 test('corrupt storage falls back to defaults', () => {
   store.set(PREFS_KEY, '{oops')
   expect(loadPrefs()).toEqual(DEFAULT_PREFS)
+})
+
+test('SFX off: tear plays nothing but still calls back (CAP-4)', () => {
+  const Audio = vi.fn()
+  vi.stubGlobal('Audio', Audio)
+  sfx.enabled = false
+  try {
+    const done = vi.fn()
+    sfx.play('tear', done)
+    expect(Audio).not.toHaveBeenCalled()
+    expect(done).toHaveBeenCalledOnce()
+  } finally {
+    sfx.enabled = true
+    vi.unstubAllGlobals()
+  }
 })

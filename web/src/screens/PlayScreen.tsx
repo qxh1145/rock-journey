@@ -40,7 +40,7 @@ export function PlayScreen({ game, answeredQuestion, selected, submitting, waiti
       <p className="q" id="q">{game.question.prompt}</p>
       <div role="radiogroup" aria-labelledby="q">
         {game.question.options.map((o) => <button key={o.id} className="nb-opt" role="radio" aria-checked={selected === o.id}
-          disabled={submitting} onClick={() => { onSelect(o.id); sfx.play('click') }}>
+          disabled={submitting || Boolean(torn)} onClick={() => { onSelect(o.id); sfx.play('click') }}>
           <span className="box" aria-hidden="true" />{o.text}
         </button>)}
       </div>

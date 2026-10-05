@@ -108,8 +108,10 @@ function App() {
     await supabase?.auth.signOut()
   }
 
+  // state chưa kịp render lại giữa hai lần chạm → khoá đồng bộ bằng ref (CAP-2: double-tap chỉ ghi một lần)
+  const inFlight = useRef(false)
   async function submitAnswer() {
-    if (!game?.question || !selected || submitting) return
+    if (!game?.question || !selected || inFlight.current) return
     const question = game.question
     const pendingKey = `rock-journey-pending:${game.session_id}:${question.question_id}`
     const previous = readStore<PendingAnswer | null>(pendingKey, null)
@@ -120,6 +122,7 @@ function App() {
       setWaitingSync(true)
       return setStatusMessage('Chưa lưu — đang ngoại tuyến, sẽ tự gửi lại khi có mạng.')
     }
+    inFlight.current = true
     setSubmitting(true)
     setStatusMessage('Đang lưu…')
     try {
@@ -156,6 +159,7 @@ function App() {
       setWaitingSync(true)
       setStatusMessage(`Chưa lưu — ${message(e, 'Mất kết nối')}. Lựa chọn vẫn được giữ, bấm để đồng bộ lại.`)
     } finally {
+      inFlight.current = false
       setSubmitting(false)
     }
   }
