@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react'
 import ReactDOM from 'react-dom/client'
 import type { Session } from '@supabase/supabase-js'
 import { supabase } from './lib/supabase'
-import { DEFAULT_QUEUE, sfx, useMusic, type Track } from './audio'
+import { DEFAULT_QUEUE, sfx, trackTitle, useMusic, type Track } from './audio'
 import {
   BADGE_KEY, CHISEL_KEY, callRpc, rpcAction, message, readStore, removeStore, writeStore,
   type GameState, type PendingAnswer, type Question, type Screen, type Stage,
@@ -216,7 +216,7 @@ function App() {
     setSelected(null)
   }
 
-  const topBar = { user, menuOpen, onToggleMenu: () => setMenuOpen((v) => !v), onOpenMusic: () => setMusicOpen(true) }
+  const topBar = { user, menuOpen, onToggleMenu: () => setMenuOpen((v) => !v), onOpenMusic: () => setMusicOpen(true), musicTitle: trackTitle(music.track, tracks) }
 
   return (
     <><div className="rotate-hint" role="alert">Vui lòng xoay dọc điện thoại để chơi.</div>

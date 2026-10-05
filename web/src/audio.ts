@@ -61,6 +61,10 @@ function beep(kind: Sfx) {
   o.start(); o.stop(ctx.currentTime + d)
 }
 
+// bài mặc định / bài kết không nằm trong playlist → lấy tên từ file đang phát
+export const trackTitle = (track: string | null, tracks: Track[]) =>
+  tracks.find((t) => t.asset_url === track)?.title ?? (track ? decodeURI(track).split('/').pop()!.replace(/\.mp3$/i, '') : tracks[0]?.title ?? '')
+
 const MUSIC_VOL = 0.3
 
 export function useMusic(tracks: Track[], defaultQueue: string[] | null) {
