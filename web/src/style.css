@@ -234,7 +234,8 @@ h2 { font-size: 1.05rem; margin: 0; }
 .start .error { top: 610px; }
 .start .bottom, .play .bottom, .result .bottom { margin: 0; padding: 0; }
 .start .bottom { top: 680px; }
-.play .top, .result .top { top: 8px; left: 14px; width: 356px; min-height: 44px; }
+.play .top, .result .top { top: 8px; left: 14px; width: 356px; min-height: 44px; z-index: 1; }
+/* khung mascot (390×394 từ y0) đè lên thanh trên → nâng thanh lên để bấm được nút nhạc/avatar */
 .play .top .ghost { position: absolute; right: 0; top: 0; }
 .play .track { top: 58px; }
 .play .mascot { left: 0; top: 0; width: 390px; height: 394px; }
