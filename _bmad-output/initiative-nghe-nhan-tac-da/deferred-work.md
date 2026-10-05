@@ -19,3 +19,12 @@
 - source_plan: `_bmad-output/initiative-nghe-nhan-tac-da/epic-player-game/story-save-state-indicator-and-safe-resend-plan.md`
   summary: E2E proving resend reuses the idempotency key (in-flight failure then replay → one answer row).
   evidence: The offline spec sends only one request, so answerCount===1 passes even if a new key is minted.
+- source_plan: `_bmad-output/initiative-nghe-nhan-tac-da/epic-player-game/story-start-screen-avatar-menu-and-player-messages-plan.md`
+  summary: Distinguish auth/server RPC failures (HTTP 401/5xx thrown by callRpc, getSession errors) from real network loss instead of always showing the network message.
+  evidence: callRpc throws on any supabase.rpc error (web/src/game.ts); main.tsx maps every throw to "Không có kết nối mạng…", so an invalid JWT loops on Thử lại.
+- source_plan: `_bmad-output/initiative-nghe-nhan-tac-da/epic-player-game/story-start-screen-avatar-menu-and-player-messages-plan.md`
+  summary: Show OAuth redirect errors (?error=&error_description=) on the start screen.
+  evidence: Only signInWithOAuth call errors reach StartScreen; redirect query errors were never read, pre-dating story 2.8.
+- source_plan: `_bmad-output/initiative-nghe-nhan-tac-da/plan-figma-fidelity-pass.md`
+  summary: Result screen two-button case (medal replay + Chơi lại) overlaps the bottom of the reward panel; Figma has no frame for it.
+  evidence: `.result .bottom` anchored bottom:46px starts ~y618 while panel spans y476–640 when both buttons render.

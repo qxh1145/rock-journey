@@ -10,7 +10,10 @@ function need(name: string) {
 }
 
 /** Create a confirmed throwaway user on staging and return its session plus a cleanup fn. */
-export async function createThrowawayPlayer(): Promise<{ session: Session; cleanup: () => Promise<void>; answerCount: () => Promise<number> }> {
+export async function createThrowawayPlayer(): Promise<{
+  session: Session; cleanup: () => Promise<void>; answerCount: () => Promise<number>
+  setSession: (patch: Record<string, unknown>) => Promise<void>
+}> {
   const serviceKey = need('SUPABASE_STAGING_SERVICE_ROLE_KEY')
   const anonKey = need('VITE_SUPABASE_KEY')
   const opts = { auth: { persistSession: false, autoRefreshToken: false } }
@@ -47,7 +50,12 @@ export async function createThrowawayPlayer(): Promise<{ session: Session; clean
       if (error) throw error
       return count ?? 0
     }
-    return { session: data.session, cleanup, answerCount }
+    // fixtures COMPLETED/claimed: sửa thẳng game_sessions bằng admin client
+    const setSession = async (patch: Record<string, unknown>) => {
+      const { error } = await admin.from('game_sessions').update(patch).eq('player_id', userId)
+      if (error) throw error
+    }
+    return { session: data.session, cleanup, answerCount, setSession }
   } catch (e) {
     await cleanup()
     throw e

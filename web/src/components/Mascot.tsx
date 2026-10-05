@@ -11,8 +11,6 @@ export function carveCaption(g: GameState, carving: boolean) {
   return `Tạc ${pct}% · Còn ${odd ? 1 : 2} câu nữa là đục tiếp`
 }
 
-const DUST = ['dust-1', 'dust-2', 'dust-2', 'dust-3', 'dust-3', 'dust-4', 'dust-4']
-
 export function Mascot({ stage, carving, onCarved, small }: {
   stage: Stage; carving?: { from: Stage; key: string } | null; onCarved?: () => void; small?: boolean
 }) {
@@ -34,14 +32,19 @@ export function Mascot({ stage, carving, onCarved, small }: {
   const shown = carving && !swapped ? carving.from : stage
   const i = STAGES.indexOf(shown)
   return <div className={`mascot ${small ? 'small' : ''} ${carving ? 'carving' : ''}`} role="img" aria-label={`Tác phẩm: hình thái ${i + 1}/7`}>
+    {carving && <img className="fx pile" src="/assets/debris-1.webp" alt="" />}
     <img className="stone" key={shown} src={`/assets/stage-${i + 1}.webp`} alt="" />
     {carving && <>
       <img className="fx saw" src="/assets/saw.webp" alt="" />
       <img className="fx chisel" src="/assets/chisel.webp" alt="" />
       <img className="fx hammer" src="/assets/hammer.webp" alt="" />
-      <img className="fx dust" src={`/assets/${DUST[STAGES.indexOf(stage)]}.webp`} alt="" />
-      <img className="fx debris" src={`/assets/debris-${(STAGES.indexOf(stage) % 3) + 1}.webp`} alt="" />
-      {stage === 'FINISHED' && <img className="fx sparkle" src="/assets/sparkle.webp" alt="" />}
+      <img className="fx spark" src="/assets/rock-spark.webp" alt="" />
+      <img className="fx dust small-dust" src="/assets/dust-1.webp" alt="" />
+      <img className="fx dust large-dust" src="/assets/dust-2.webp" alt="" />
+      <img className="fx dust ground-dust" src="/assets/dust-3.webp" alt="" />
+      {[1, 2, 3].map((n) => <img key={n} className={`fx debris debris-${n}`} src={`/assets/debris-${n}.webp`} alt="" />)}
+      <img className="fx sparkle" src="/assets/sparkle.webp" alt="" />
+      <img className="fx sparkle sparkle-2" src="/assets/sparkle-2.webp" alt="" />
     </>}
   </div>
 }

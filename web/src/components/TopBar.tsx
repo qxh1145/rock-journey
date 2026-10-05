@@ -21,9 +21,8 @@ export function TopBar({ title, showAvatar = true, user, menuOpen, onToggleMenu,
   )
 }
 
-export function AvatarMenu({ user, onSignOut }: { user: Session['user'] | null; onSignOut: () => void }) {
+export function AvatarMenu({ onSignOut }: { onSignOut: () => void }) {
   return <div className="menu" role="menu">
-    <p className="small">{user?.email}</p>
     <button role="menuitem" className="link" onClick={onSignOut}>Đăng xuất</button>
   </div>
 }
