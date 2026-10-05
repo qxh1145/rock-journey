@@ -107,9 +107,15 @@ function App() {
     await supabase?.auth.signOut()
   }
 
+  // khoá đồng bộ: hai lần chạm cùng tick vẫn thấy state submitting cũ
+  const inFlight = useRef(false)
   async function submitAnswer() {
-    if (!game?.question || !selected || submitting) return
-    const question = game.question
+    if (!game?.question || !selected || inFlight.current) return
+    inFlight.current = true
+    try { await doSubmit(game, game.question, selected) } finally { inFlight.current = false }
+  }
+
+  async function doSubmit(game: GameState, question: Question, selected: string) {
     const pendingKey = `rock-journey-pending:${game.session_id}:${question.question_id}`
     const previous = readStore<PendingAnswer | null>(pendingKey, null)
     // giữ cùng idempotency key cho tới khi server xác nhận

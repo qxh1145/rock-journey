@@ -19,3 +19,6 @@
 - source_plan: `_bmad-output/initiative-nghe-nhan-tac-da/epic-player-game/story-save-state-indicator-and-safe-resend-plan.md`
   summary: E2E proving resend reuses the idempotency key (in-flight failure then replay → one answer row).
   evidence: The offline spec sends only one request, so answerCount===1 passes even if a new key is minted.
+- source_plan: `/Users/quan/Work/rock-journey/_bmad-output/initiative-nghe-nhan-tac-da/epic-player-game/story-question-feedback-and-page-tear-to-spec-plan.md`
+  summary: Confirm e2e/question-tear.spec.ts passes in the CI staging e2e job.
+  evidence: Not run locally because SUPABASE_STAGING_SERVICE_ROLE_KEY is absent, so the double-tap, tear-lock and reduced-motion ACs have no run evidence yet.

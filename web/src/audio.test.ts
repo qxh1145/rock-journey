@@ -23,3 +23,17 @@ test('corrupt storage falls back to defaults', () => {
   store.set(PREFS_KEY, '{oops')
   expect(loadPrefs()).toEqual(DEFAULT_PREFS)
 })
+
+test('sfx.play is silent when SFX is off (CAP-4)', async () => {
+  const { sfx } = await import('./audio')
+  let made = 0
+  globalThis.Audio = class { constructor() { made++ } } as unknown as typeof Audio
+  const prev = [sfx.enabled, globalThis.Audio] as const
+  sfx.enabled = false
+  try {
+    sfx.play('tear')
+    expect(made).toBe(0)
+  } finally {
+    [sfx.enabled, globalThis.Audio] = prev
+  }
+})

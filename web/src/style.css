@@ -155,4 +155,8 @@ h2 { font-size: 1.05rem; margin: 0; }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: .2s !important; animation-iteration-count: 1 !important; transition-duration: .2s !important; }
   .fx { display: none; }
+  /* thay xé trang bằng lật trang nhẹ */
+  .tear.keep { display: none; }
+  .tear.piece { clip-path: none; animation: swap .3s ease-out forwards !important; }
 }
+@keyframes swap { to { opacity: 0; } }
