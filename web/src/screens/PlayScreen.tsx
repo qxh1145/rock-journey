@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react'
 import { sfx } from '../audio'
-import { Mascot, carveCaption } from '../components/Mascot'
+import { Mascot } from '../components/Mascot'
 import { Notebook } from '../components/Notebook'
 import { TopBar, type TopBarProps } from '../components/TopBar'
 import { optText, type GameState, type Question, type Stage } from '../game'
@@ -33,7 +33,6 @@ export function PlayScreen({ game, answeredQuestion, selected, submitting, waiti
     <TopBar title={`Câu ${Math.min(game.answer ? game.answered_count : game.answered_count + 1, 12)}/12`} {...topBar} />
     <div className="track"><div style={{ width: `${(game.answered_count / 12) * 100}%` }} /></div>
     <Mascot stage={game.mascot_stage} carving={carving} onCarved={onCarved} />
-    <p className="caption">{carveCaption(game, carving?.from ?? null)}</p>
 
     <div className="nb-stack">
     {feedbackPage ?? (game.question ? <Notebook key={game.question.question_id}>
@@ -55,7 +54,7 @@ export function PlayScreen({ game, answeredQuestion, selected, submitting, waiti
     <div className="bottom">
       {game.answer
         ? <><button className="primary" onClick={() => onNext(feedbackPage)}>{game.status === 'COMPLETED' ? 'Xem kết quả' : `Tiếp tục câu ${game.answered_count + 1}`}</button>
-            <p className="footnote">Đã lưu câu trả lời · Tiến độ được giữ nguyên</p></>
+            <p className="footnote">quntrn05</p></>
         : <><button className="primary" disabled={!selected || submitting || Boolean(torn)} onClick={onSubmit}>
               {submitting ? 'Đang lưu…' : waitingSync ? 'Thử đồng bộ lại' : 'Chốt đáp án'}</button>
             <p className={waitingSync ? 'footnote error' : 'footnote'} role="status">{statusMessage || 'Sau khi chốt, bạn không thể trả lời lại.'}</p></>}
