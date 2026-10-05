@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react'
 import ReactDOM from 'react-dom/client'
 import type { Session } from '@supabase/supabase-js'
 import { supabase } from './lib/supabase'
-import { sfx, useMusic, type Track } from './audio'
+import { DEFAULT_QUEUE, sfx, useMusic, type Track } from './audio'
 import {
   BADGE_KEY, CHISEL_KEY, callRpc, rpcAction, message, readStore, removeStore, writeStore,
   type GameState, type PendingAnswer, type Question, type Screen, type Stage,
@@ -33,7 +33,8 @@ function App() {
   const [carving, setCarving] = useState<{ from: Stage; key: string } | null>(null)
   // trang sổ cũ đang bị xé (Figma: xé trên xuống ~0,8s)
   const [torn, setTorn] = useState<{ key: string; node: ReactNode } | null>(null)
-  const music = useMusic(tracks)
+  // tài khoản này giữ playlist cũ thay vì nhạc nền mặc định
+  const music = useMusic(tracks, user?.email?.toLowerCase() === 'honguyenvietanh1405@gmail.com' ? null : DEFAULT_QUEUE)
   // undefined = chưa nhận INITIAL_SESSION; null = khách → lần đầu luôn route
   const activeUserId = useRef<string | null | undefined>(undefined)
 
@@ -107,8 +108,10 @@ function App() {
     await supabase?.auth.signOut()
   }
 
+  // state chưa kịp render lại giữa hai lần chạm → khoá đồng bộ bằng ref (CAP-2: double-tap chỉ ghi một lần)
+  const inFlight = useRef(false)
   async function submitAnswer() {
-    if (!game?.question || !selected || submitting) return
+    if (!game?.question || !selected || inFlight.current) return
     const question = game.question
     const pendingKey = `rock-journey-pending:${game.session_id}:${question.question_id}`
     const previous = readStore<PendingAnswer | null>(pendingKey, null)
@@ -119,6 +122,7 @@ function App() {
       setWaitingSync(true)
       return setStatusMessage('Chưa lưu — đang ngoại tuyến, sẽ tự gửi lại khi có mạng.')
     }
+    inFlight.current = true
     setSubmitting(true)
     setStatusMessage('Đang lưu…')
     try {
@@ -155,6 +159,7 @@ function App() {
       setWaitingSync(true)
       setStatusMessage(`Chưa lưu — ${message(e, 'Mất kết nối')}. Lựa chọn vẫn được giữ, bấm để đồng bộ lại.`)
     } finally {
+      inFlight.current = false
       setSubmitting(false)
     }
   }
@@ -171,7 +176,7 @@ function App() {
 
   function next(feedbackPage: ReactNode) {
     if (!game) return
-    if (game.status === 'COMPLETED') return setScreen('result')
+    if (game.status === 'COMPLETED') { music.finish(); return setScreen('result') }
     if (game.answer && feedbackPage) { setTorn({ key: game.answer.answer_id, node: feedbackPage }); sfx.play('tear') }
     setGame({ ...game, answer: undefined })
     setSelected(null)
