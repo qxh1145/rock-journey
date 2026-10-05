@@ -13,3 +13,9 @@
 - source_plan: `_bmad-output/initiative-nghe-nhan-tac-da/epic-platform-baseline/story-ci-cd-auto-deploy-plan.md`
   summary: Shared migrate-staging concurrency group can cancel another branch's pending staging migration.
   evidence: GitHub keeps one pending run per concurrency group; a push on branch A cancels branch B's queued migrate job while B's Vercel Preview still goes live.
+- source_plan: `_bmad-output/initiative-nghe-nhan-tac-da/epic-player-game/story-save-state-indicator-and-safe-resend-plan.md`
+  summary: Auto-retry with back-off for DATABASE_UNAVAILABLE/RATE_LIMITED on submit_answer while the browser is online.
+  evidence: The only auto-resend is the window 'online' event; a server outage leaves the user on a manual retry.
+- source_plan: `_bmad-output/initiative-nghe-nhan-tac-da/epic-player-game/story-save-state-indicator-and-safe-resend-plan.md`
+  summary: E2E proving resend reuses the idempotency key (in-flight failure then replay → one answer row).
+  evidence: The offline spec sends only one request, so answerCount===1 passes even if a new key is minted.
