@@ -8,9 +8,9 @@ const g = (answered: number): GameState => ({
 })
 
 it('carveCaption turns the stage into a percent and the next-carve countdown', () => {
-  expect(carveCaption(g(0), false)).toBe('Tạc 0% · Còn 2 câu nữa là đục tiếp')
-  expect(carveCaption(g(4), false)).toBe('Tạc 33% · Còn 2 câu nữa là đục tiếp')
-  expect(carveCaption(g(5), false)).toBe('Tạc 33% · Xong câu này là đục tiếp')
-  expect(carveCaption(g(12), false)).toBe('Tạc 100% · Tác phẩm hoàn thiện')
-  expect(carveCaption(g(6), true)).toBe('Tạc 50% · Đang đục…')
+  expect(carveCaption(g(0), null)).toBe('Tạc 0% · Còn 2 câu nữa là đục tiếp')
+  expect(carveCaption(g(4), null)).toBe('Tạc 33% · Còn 2 câu nữa là đục tiếp')
+  expect(carveCaption(g(5), null)).toBe('Tạc 33% · Xong câu này là đục tiếp')
+  expect(carveCaption(g(12), null)).toBe('Tạc 100% · Tác phẩm hoàn thiện')
+  expect(carveCaption(g(6), 'CARVED_2')).toBe('Tạc 33% · Đang đục…')
 })

@@ -1,0 +1,7 @@
+<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="44" height="44" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Avatar menu">
+<circle id="Avatar circle" cx="22" cy="22" r="15.5" fill="white" stroke="#D1D1D6"/>
+<circle id="Avatar head" cx="22" cy="17.5" r="5.2" fill="#245C46"/>
+<path id="Avatar shoulders" d="M12.5 33.5C12.5 27.5 17 25.5 22 25.5C27 25.5 31.5 27.5 31.5 33.5H12.5Z" fill="#245C46"/>
+</g>
+</svg>

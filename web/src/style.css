@@ -1,7 +1,7 @@
 /* Theo Figma "UX-UI Draft" — khung 390×844, chỉ màn dọc */
 :root {
-  --bg: #f2f2f7; --fg: #1c1c1e; --muted: #6b6b70; --green: #24583f; --green-soft: #e3eee6;
-  --paper: #ffe1e3; --line: #8fb3f0; --margin: #e05a5a; --ink: #222; --ok: #1f6b3a; --bad: #b3261e;
+  --bg: #f2f2f7; --fg: #1c1c1e; --muted: #636366; --green: #245c46; --green-soft: #e3eee6;
+  --bad: #b3261e;
   --card: #fff; --hand: 'Patrick Hand', 'Comic Sans MS', cursive;
   color-scheme: light;
 }
@@ -23,89 +23,81 @@ h2 { font-size: 1.05rem; margin: 0; }
 .eyebrow { color: var(--green); font-size: .8rem; margin: 18px 0; }
 
 .bottom { margin-top: auto; display: flex; flex-direction: column; gap: 8px; padding-top: 10px; }
-.primary { width: 100%; min-height: 54px; border: 0; border-radius: 14px; background: var(--green); color: #fff; font-weight: 700; font-size: 1.05rem; }
+.primary { width: 100%; min-height: 54px; border: 0; border-radius: 14px; background: var(--green); color: #fff; font-weight: 600; font-size: 17px; line-height: 22px; }
 .primary:disabled { opacity: .45; cursor: default; }
 .primary.light { background: #fff; color: var(--green); }
-.footnote { text-align: center; color: var(--muted); font-size: .85rem; margin: 0; }
+.footnote { text-align: center; color: var(--muted); font-size: 13px; line-height: 18px; margin: 0; }
 .footnote.left { text-align: left; }
 .link { background: none; border: 0; color: var(--muted); text-decoration: underline; min-height: 44px; }
 
 .rules { list-style: none; padding: 0; margin: 4px 0; display: grid; gap: 10px; }
 
 /* header + tiến trình */
-.top { display: flex; align-items: center; gap: 10px; min-height: 48px; }
-.top-title { flex: 1; font-size: 1rem; }
+.top { display: flex; align-items: center; gap: 4px; min-height: 48px; }
+.top-title { flex: 1; font-size: 15px; line-height: 24px; font-weight: 600; }
 .avatar { width: 44px; height: 44px; border-radius: 50%; border: 0; background: none; padding: 0; display: grid; place-items: center; font-size: 1.4rem; }
 .avatar img { width: 32px; height: 32px; border-radius: 50%; }
-.ghost { border: 0; background: #fff; border-radius: 22px; min-height: 44px; padding: 0 14px; color: var(--green); font-weight: 700; }
-.track { height: 3px; background: #d8d8dc; border-radius: 2px; }
-.track div { height: 100%; background: var(--green); border-radius: 2px; transition: width .4s; }
-.caption { text-align: center; color: var(--muted); font-size: .8rem; margin: -6px 0 0; }
+.avatar .avatar-default { width: 44px; height: 44px; border-radius: 0; }
+.ghost { display: flex; align-items: center; gap: 8px; border: 0; background: #fff; border-radius: 22px; min-height: 44px; padding: 0 10px; color: var(--green); font-size: 14px; font-weight: 600; }
+.ghost span { font-size: 22px; }
+.track { height: 3px; background: #d1d1d6; border-radius: 1.5px; }
+.track div { height: 100%; background: var(--green); border-radius: 1.5px; transition: width .4s; }
+.caption { text-align: center; color: var(--muted); font-size: 13px; line-height: 18px; margin: 0; }
 
-/* mascot + animation đục — toạ độ Figma 64:873–64:1363 (canvas FX 390×394 ở đỉnh khung) */
+/* mascot + animation đục — Figma 64:873–64:1363: 11 khung 00..10 rải trên 1,4s ở 0/10/20/30/36/43/52/61/68/77/86%
+   (05 gõ búa 1 = 600ms, 07 gõ búa 2 = 850ms, 08 đổi hình = 950ms — khớp hẹn giờ SFX trong Mascot.tsx).
+   Mỗi lớp FX là hộp chưa xoay, căn tâm theo hộp Figma; canvas FX 390×394 ở đỉnh khung. */
 .mascot { position: relative; height: 255px; }
 .stone { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; animation: fade-in .25s ease-out; }
-.fx { position: absolute; pointer-events: none; opacity: 0; animation: 1.4s ease-out both; }
-.saw { left: 365px; top: 6px; width: 150px; animation-name: saw; }
-.chisel { left: 120px; top: 50px; width: 60px; animation-name: chisel; }
-.hammer { left: 224px; top: 49px; width: 132px; transform-origin: 85% 85%; animation-name: hammer; animation-timing-function: ease-in-out; }
-.spark { left: 262px; top: 123px; width: 40px; animation-name: spark; }
-.small-dust { left: 185px; top: 198px; width: 60px; animation-name: small-dust; }
-.large-dust { left: 140px; top: 203px; width: 120px; animation-name: large-dust; }
-.ground-dust { left: 100px; top: 286px; width: 200px; animation-name: ground-dust; }
-.debris-1 { left: 270px; top: 145px; width: 30px; --to: 45px 155px; animation-name: fling; animation-timing-function: ease-in; }
-.debris-2 { left: 194px; top: 199px; width: 40px; --to: -152px 149px; animation-name: fling; animation-timing-function: ease-in; }
-.debris-3 { left: 194px; top: 204px; width: 40px; --to: 65px 98px; animation-name: fling; animation-timing-function: ease-in; }
-.pile { left: 100px; top: 283px; width: 40px; animation-name: pile; }
-.sparkle { left: 95px; top: 130px; width: 200px; animation-name: sparkle; }
-.sparkle-2 { left: 65px; top: 132px; width: 260px; animation-delay: .1s; }
-.play .carving .stone { animation: carve-stone 1.4s ease-out, shake 1.4s; }
+.fx { position: absolute; pointer-events: none; opacity: 0; max-width: none; object-fit: contain; animation: 1.4s ease-in-out both; }
+.pile { animation-name: fx-pile; }
+.debris-a { animation-name: fx-debris-a; }
+.debris-b { animation-name: fx-debris-b; }
+.debris-c { animation-name: fx-debris-c; }
+.chisel { animation-name: fx-chisel; }
+.hammer { animation-name: fx-hammer; }
+.saw { animation-name: fx-saw; }
+.spark { animation-name: fx-spark; }
+.small-dust { animation-name: fx-small-dust; }
+.large-dust { animation-name: fx-large-dust; }
+.ground-dust { animation-name: fx-ground-dust; }
+.sparkle { animation-name: fx-sparkle; }
+.sparkle-2 { animation-name: fx-sparkle-2; }
+.play .stone.shake { animation: shake 1.4s ease-in-out; }
 @keyframes fade-in { from { opacity: 0; } }
-/* 01–03 (0–30%): máy xẻ (365,6)→(270,46)→(230,96)→ rút về */
-@keyframes saw {
-  0% { opacity: 1; translate: 0 0; } 10% { translate: -95px 40px; } 16%, 24% { translate: -132px 88px; } 20% { translate: -138px 92px; }
-  26% { opacity: 1; translate: -135px 90px; } 30% { opacity: 1; translate: 0 0; } 31%, 100% { opacity: 0; translate: 0 0; } }
-/* 04 (~35%): đổi sang đục (120,50)→(161,135) + búa (224,49)→(158,100), 07 (~61%) búa giáng (171,170) */
-@keyframes chisel { 0%, 31% { opacity: 0; translate: 0 0; } 35% { opacity: 1; translate: 0 0; } 45%, 66% { opacity: 1; translate: 41px 85px; }
-  80% { opacity: 1; translate: 0 0; } 86%, 100% { opacity: 0; translate: 0 0; } }
-@keyframes hammer { 0%, 31% { opacity: 0; translate: 0 0; rotate: 0deg; scale: 1; } 35% { opacity: 1; translate: 0 0; rotate: 0deg; }
-  39% { translate: -66px 51px; rotate: -30deg; scale: 1; } 43% { translate: -53px 121px; rotate: 8deg; scale: 1.08 .9; }
-  52% { translate: -66px 51px; rotate: -30deg; scale: 1; } 61% { translate: -53px 121px; rotate: 8deg; scale: 1.08 .9; }
-  68% { opacity: 1; translate: -66px 51px; rotate: -15deg; scale: 1; } 86%, 100% { opacity: 0; translate: 0 0; rotate: 0deg; } }
-/* tia đá 40×33 → 130×108 lúc máy cắt sâu và lúc búa giáng */
-@keyframes spark { 0%, 12% { opacity: 0; scale: 1; } 20% { opacity: 1; scale: 3.25; } 30%, 58% { opacity: 0; scale: 1; }
-  63% { opacity: 1; scale: 3.25; } 72%, 100% { opacity: 0; scale: 3.25; } }
-/* bụi nhỏ → 180×104, bụi lớn → 440×273 @(-25,42), bụi mặt đất → 380×205 @(10,247) */
-@keyframes small-dust { 0%, 58% { opacity: 0; scale: 1; } 62% { opacity: 1; } 75% { opacity: .9; scale: 3; } 100% { opacity: 0; scale: 3; } }
-@keyframes large-dust { 0%, 60% { opacity: 0; scale: 1; translate: 0 0; } 68% { opacity: 1; } 90% { opacity: .8; scale: 3.67; translate: -5px -61px; } 100% { opacity: 0; scale: 3.67; translate: -5px -61px; } }
-@keyframes ground-dust { 0%, 61% { opacity: 0; scale: 1; translate: 0 0; } 70% { opacity: 1; } 90% { opacity: .8; scale: 1.9; translate: 0 10px; } 100% { opacity: 0; scale: 1.9; translate: 0 10px; } }
-/* 3 mảnh vụn văng tới (315,300) (42,348) (259,302); đống vụn nằm sau đá */
-@keyframes fling { 0%, 61% { opacity: 0; translate: 0 0; rotate: 0deg; } 63% { opacity: 1; } 85% { opacity: 1; translate: var(--to); rotate: 120deg; } 100% { opacity: 0; translate: var(--to); rotate: 120deg; } }
-@keyframes pile { 0%, 62% { opacity: 0; scale: .6; } 75%, 100% { opacity: 1; scale: 1; } }
-/* 10 (68–100%): lộ hình mới + lấp lánh */
-@keyframes sparkle { 0%, 68% { opacity: 0; scale: .8; } 82% { opacity: 1; scale: 1; } 100% { opacity: 0; scale: 1.05; } }
-/* đá 350×259 @(20,107) → 348×296 @(21,70) khi lộ hình */
-@keyframes carve-stone { 0%, 100% { left: 20px; top: 111px; width: 350px; height: 255px; } 5%, 66% { left: 20px; top: 107px; width: 350px; height: 259px; } 68%, 92% { left: 21px; top: 70px; width: 348px; height: 296px; } }
-@keyframes shake { 0%, 30%, 68%, 100% { translate: 0 0; } 10%, 20% { translate: -3px 2px; } 15%, 25% { translate: 3px -2px; }
-  61% { translate: -4px 3px; } 63% { translate: 4px -3px; } 65% { translate: -2px 2px; } }
+@keyframes fx-pile { 0%, 10%, 20%, 30%, 36%, 43%, 52%, 61%, 68% { left: 100px; top: 283.2px; width: 40px; height: 33.6px; opacity: 0; rotate: 0deg; } 77% { left: 26px; top: 304.4px; width: 92px; height: 77.3px; opacity: 1; rotate: 0deg; } 86% { left: 26px; top: 305.4px; width: 92px; height: 77.3px; opacity: 1; rotate: 0deg; } 100% { left: 26px; top: 305.4px; width: 92px; height: 77.3px; opacity: 0; rotate: 0deg; } }
+@keyframes fx-debris-a { 0%, 10%, 20% { left: 270px; top: 145.3px; width: 30px; height: 9.3px; opacity: 0; rotate: 0deg; } 30% { left: 260px; top: 142.7px; width: 60px; height: 18.6px; opacity: 1; rotate: 0deg; } 36% { left: 275px; top: 214.9px; width: 110px; height: 34.1px; opacity: 1; rotate: 20deg; } 43%, 52%, 61%, 68%, 77%, 86% { left: 295px; top: 329px; width: 110px; height: 34.1px; opacity: 1; rotate: 35deg; } 100% { left: 295px; top: 329px; width: 110px; height: 34.1px; opacity: 0; rotate: 35deg; } }
+@keyframes fx-debris-b { 0%, 10%, 20%, 30%, 36% { left: 194px; top: 198.6px; width: 40px; height: 22.8px; opacity: 0; rotate: 0deg; } 43% { left: 194px; top: 198.6px; width: 40px; height: 22.8px; opacity: 1; rotate: 0deg; } 52% { left: 68px; top: 221.5px; width: 100px; height: 57px; opacity: 1; rotate: -25deg; } 61%, 68%, 77%, 86% { left: 48px; top: 310.6px; width: 96px; height: 54.7px; opacity: 1; rotate: -40deg; } 100% { left: 48px; top: 310.6px; width: 96px; height: 54.7px; opacity: 0; rotate: -40deg; } }
+@keyframes fx-debris-c { 0%, 10%, 20%, 30%, 36%, 43%, 52% { left: 194px; top: 203.8px; width: 40px; height: 12.4px; opacity: 0; rotate: 0deg; } 61% { left: 194px; top: 203.8px; width: 40px; height: 12.4px; opacity: 1; rotate: 0deg; } 68% { left: 232px; top: 243.4px; width: 120px; height: 37.2px; opacity: 1; rotate: 15deg; } 77%, 86% { left: 245px; top: 325.9px; width: 110px; height: 34.1px; opacity: 1; rotate: 28deg; } 100% { left: 245px; top: 325.9px; width: 110px; height: 34.1px; opacity: 0; rotate: 28deg; } }
+@keyframes fx-chisel { 0%, 10%, 20%, 30%, 68%, 77%, 86% { left: 120px; top: 49.7px; width: 60px; height: 80.7px; opacity: 0; rotate: 0deg; } 36%, 43%, 52%, 61% { left: 161px; top: 134.7px; width: 60px; height: 80.7px; opacity: 1; rotate: 0deg; } 100% { left: 120px; top: 49.7px; width: 60px; height: 80.7px; opacity: 0; rotate: 0deg; } }
+@keyframes fx-hammer { 0%, 10%, 20%, 30%, 68%, 77%, 86% { left: 254px; top: -15.9px; width: 72px; height: 111.8px; opacity: 0; rotate: -65deg; } 36%, 52% { left: 188px; top: 35.1px; width: 72px; height: 111.8px; opacity: 1; rotate: -65deg; } 43%, 61% { left: 184px; top: 69.1px; width: 72px; height: 111.8px; opacity: 1; rotate: -100deg; } 100% { left: 254px; top: -15.9px; width: 72px; height: 111.8px; opacity: 0; rotate: -65deg; } }
+@keyframes fx-saw { 0%, 36%, 43%, 52%, 61%, 68%, 77%, 86% { left: 365px; top: 6.1px; width: 150px; height: 107.8px; opacity: 0; rotate: 0deg; } 10% { left: 270px; top: 46.1px; width: 150px; height: 107.8px; opacity: 1; rotate: 0deg; } 20% { left: 247px; top: 74.1px; width: 150px; height: 107.8px; opacity: 1; rotate: 0deg; } 30% { left: 230px; top: 96.1px; width: 150px; height: 107.8px; opacity: 1; rotate: 0deg; } 100% { left: 365px; top: 6.1px; width: 150px; height: 107.8px; opacity: 0; rotate: 0deg; } }
+@keyframes fx-spark { 0%, 10% { left: 262px; top: 123.4px; width: 40px; height: 33.2px; opacity: 0; rotate: 0deg; } 20% { left: 247px; top: 111px; width: 70px; height: 58.1px; opacity: 1; rotate: 0deg; } 30% { left: 220.5px; top: 120.6px; width: 95px; height: 78.8px; opacity: 1; rotate: -10deg; } 36% { left: 213px; top: 114.3px; width: 110px; height: 91.3px; opacity: 0; rotate: -10deg; } 43% { left: 174px; top: 171.8px; width: 80px; height: 66.4px; opacity: 1; rotate: 0deg; } 52% { left: 161.5px; top: 161.4px; width: 105px; height: 87.2px; opacity: 0; rotate: 0deg; } 61% { left: 164px; top: 163.5px; width: 100px; height: 83px; opacity: 1; rotate: 0deg; } 68%, 77%, 86% { left: 149px; top: 151.1px; width: 130px; height: 107.9px; opacity: 0; rotate: 0deg; } 100% { left: 149px; top: 151.1px; width: 130px; height: 107.9px; opacity: 0; rotate: 0deg; } }
+@keyframes fx-small-dust { 0%, 10%, 20% { left: 185px; top: 197.6px; width: 60px; height: 34.8px; opacity: 0; rotate: 0deg; } 30% { left: 255px; top: 142.6px; width: 60px; height: 34.8px; opacity: 0; rotate: 0deg; } 36% { left: 235px; top: 137.3px; width: 130px; height: 75.4px; opacity: 0.5; rotate: 0deg; } 43% { left: 170px; top: 188.9px; width: 90px; height: 52.2px; opacity: 0.9; rotate: 0deg; } 52% { left: 153px; top: 161.5px; width: 150px; height: 87px; opacity: 0.6; rotate: 0deg; } 61% { left: 150px; top: 174.3px; width: 130px; height: 75.4px; opacity: 1; rotate: 0deg; } 68%, 77%, 86% { left: 115px; top: 147.8px; width: 180px; height: 104.4px; opacity: 0; rotate: 0deg; } 100% { left: 115px; top: 147.8px; width: 180px; height: 104.4px; opacity: 0; rotate: 0deg; } }
+@keyframes fx-large-dust { 0%, 10%, 20%, 30%, 36%, 43%, 52% { left: 140px; top: 202.8px; width: 120px; height: 74.4px; opacity: 0; rotate: 0deg; } 61% { left: 125px; top: 193.5px; width: 150px; height: 93px; opacity: 0.55; rotate: 0deg; } 68% { left: 5px; top: 114.2px; width: 380px; height: 235.6px; opacity: 1; rotate: 0deg; } 77%, 86% { left: -25px; top: 41.6px; width: 440px; height: 272.8px; opacity: 0; rotate: 0deg; } 100% { left: -25px; top: 41.6px; width: 440px; height: 272.8px; opacity: 0; rotate: 0deg; } }
+@keyframes fx-ground-dust { 0%, 10%, 20%, 30%, 36%, 43%, 52%, 61% { left: 100px; top: 286px; width: 200px; height: 108px; opacity: 0; rotate: 0deg; } 68% { left: 50px; top: 259px; width: 300px; height: 162px; opacity: 0.9; rotate: 0deg; } 77% { left: 20px; top: 248.8px; width: 360px; height: 194.4px; opacity: 0.3; rotate: 0deg; } 86% { left: 10px; top: 247.4px; width: 380px; height: 205.2px; opacity: 0; rotate: 0deg; } 100% { left: 10px; top: 247.4px; width: 380px; height: 205.2px; opacity: 0; rotate: 0deg; } }
+@keyframes fx-sparkle { 0%, 10%, 20%, 30%, 36%, 43%, 52%, 61%, 68% { left: 95px; top: 130px; width: 200px; height: 180px; opacity: 0; rotate: 0deg; } 77% { left: 55px; top: 106px; width: 280px; height: 252px; opacity: 1; rotate: 0deg; } 86% { left: 45px; top: 91px; width: 300px; height: 270px; opacity: 0.55; rotate: 0deg; } 100% { left: 45px; top: 91px; width: 300px; height: 270px; opacity: 0; rotate: 0deg; } }
+@keyframes fx-sparkle-2 { 0%, 10%, 20%, 30%, 36%, 43%, 52%, 61%, 68% { left: 65px; top: 132.5px; width: 260px; height: 195px; opacity: 0; rotate: 0deg; } 77% { left: 75px; top: 150px; width: 240px; height: 180px; opacity: 0; rotate: 0deg; } 86% { left: 50px; top: 129.2px; width: 290px; height: 217.5px; opacity: 1; rotate: -8deg; } 100% { left: 50px; top: 129.2px; width: 290px; height: 217.5px; opacity: 0; rotate: -8deg; } }
+/* đá rung theo khung 02/03/05/07 */
+@keyframes shake { 0%, 10%, 36%, 52%, 68%, 100% { translate: 0 0; } 20% { translate: 2px 0; } 30% { translate: -2px 1px; } 43% { translate: 0 3px; } 61% { translate: -2px 4px; } }
 
-/* sổ lật */
-.notebook { position: relative; padding-top: 14px; }
-.spiral { position: absolute; top: 0; left: 14px; right: 14px; height: 26px; z-index: 1;
-  background: radial-gradient(circle at 50% 70%, #222 0 5px, transparent 5.5px) 0 0 / 26px 26px repeat-x; }
-.paper { background: var(--paper); border: 3px solid var(--green); border-radius: 4px; padding: 26px 16px 12px 30px; min-height: 300px;
-  background-image: linear-gradient(to right, transparent 18px, var(--margin) 18px, var(--margin) 20px, transparent 20px),
-                    repeating-linear-gradient(transparent 0 31px, var(--line) 31px 32px);
-  background-position: 0 0, 0 14px; font-family: var(--hand); font-size: 1.15rem; color: var(--ink); line-height: 32px; }
-.paper p { margin: 0 0 8px; }
-.q { font-size: 1.2rem; }
-.nb-opt { display: flex; align-items: center; gap: 12px; width: 100%; min-height: 48px; background: none; border: 0; padding: 0; text-align: left; font-family: var(--hand); font-size: 1.15rem; }
-.box { width: 22px; height: 22px; border: 2px solid var(--ink); border-radius: 3px; flex: none; display: grid; place-items: center; }
-.nb-opt[aria-checked="true"] .box::after { content: "✓"; font-size: 1.5rem; line-height: 1; color: var(--green); font-weight: 700; translate: 2px -3px; }
-.nb-hint { font-size: .95rem; color: #555; }
-.nb-wrong { color: var(--bad); }
-.nb-right { color: var(--ok); }
-.paper .nb-explain { margin-top: 12px; }
+/* sổ lật — Figma 20:295 / 21:143: nền vẽ tay 350×340 @ y-14 (SVG tràn 388.53×369.29) */
+.notebook { position: relative; width: 350px; height: 326px; }
+.nb-bg { position: absolute; left: -19.29px; top: -14px; width: 388.53px; height: 369.29px; max-width: none; pointer-events: none; }
+.paper { position: relative; padding: 44px 24px 0 22px; font-family: var(--hand); color: #263d30; }
+.paper:has(.nb-explain) { padding-top: 42px; }
+.paper p { margin: 0; }
+.q { font-size: 23px; line-height: 26px; min-height: 52px; }
+.q + [role="radiogroup"] { display: grid; gap: 2px; width: 306px; margin: 42px 0 0 -1px; }
+.nb-opt { position: relative; display: block; width: 100%; min-height: 48px; background: none; border: 0; padding: 9px 0 0 42px; text-align: left; font-family: var(--hand); font-size: 23px; line-height: 26px; color: inherit; }
+.box { position: absolute; left: 4px; top: 12px; width: 24px; height: 24px; background: #fbfaf0; border: 1.6px solid #263d30; border-radius: 3px; }
+.nb-opt[aria-checked="true"] .box::after { content: ""; position: absolute; left: -3.6px; top: -5.6px; width: 28px; height: 28px; background: url(/assets/tick.svg); }
+.paper .nb-hint { margin-top: 6px; font-size: 16px; line-height: 19px; }
+.nb-wrong, .nb-right, .nb-explain { font-size: 21px; line-height: 24px; }
+.paper .nb-wrong { color: #a12e24; margin-top: 27px; }
+.paper .nb-wrong + .nb-right { margin-top: 18px; }
+.paper .nb-right.ok { color: #247347; margin: 27px 0 42px; }
+.paper .nb-explain { margin-top: 24px; }
 
 /* xé trang: mép răng cưa chạy từ trên xuống (Figma 11 mốc 0–100%, ~0,8s) */
 @property --tear { syntax: '<percentage>'; inherits: true; initial-value: 0%; }
@@ -180,7 +172,7 @@ h2 { font-size: 1.05rem; margin: 0; }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: .2s !important; animation-iteration-count: 1 !important; transition-duration: .2s !important; }
   .fx { display: none; }
-  .play .carving .stone { animation: fade-in .2s ease-out; }
+  .play .stone.shake { animation: none; }
   /* FR-16: lật trang nhẹ thay cho xé; vẫn giữ animation để onAnimationEnd mở khoá */
   .tear.keep { display: none; }
   .tear.piece { clip-path: none; animation: swap .2s ease-out forwards !important; }
@@ -226,14 +218,14 @@ h2 { font-size: 1.05rem; margin: 0; }
 .start .bottom, .play .bottom, .result .bottom { margin: 0; padding: 0; }
 .start .bottom { top: 680px; }
 .play .top, .result .top { top: 8px; left: 14px; width: 356px; min-height: 44px; }
+.play .top .ghost { position: absolute; left: 225px; top: 0; }
 .play .track { top: 58px; }
 .play .mascot { left: 0; top: 0; width: 390px; height: 394px; }
-.play .stone { left: 20px; top: 111px; width: 350px; height: 255px; inset: auto; }
-.play .caption { top: 372px; margin: 0; line-height: 18px; }
+/* hộp đá rộng 350, đáy y366 — khớp Figma 350×255 @111 (hình 3), 350×259 @107 (4), 348×296 @70 (5) */
+.play .stone { inset: 70px auto auto 20px; width: 350px; height: 296px; object-position: 50% 100%; }
+.play .caption { top: 372px; }
 .play .nb-stack { top: 408px; height: 326px; }
-.play .paper { min-height: 312px; }
 .play .bottom { top: 748px; gap: 8px; }
-.play .footnote { line-height: 18px; }
 .result .top { left: 20px; width: 350px; }
 .result h1 { top: 98px; }
 .result > .muted { top: 155px; line-height: 24px; }
@@ -242,4 +234,3 @@ h2 { font-size: 1.05rem; margin: 0; }
 .result .score { top: 416px; line-height: 24px; }
 .result .panel { top: 476px; min-height: 164px; }
 .result .bottom { top: auto; bottom: 46px; gap: 18px; }
-.result .footnote { line-height: 18px; }
