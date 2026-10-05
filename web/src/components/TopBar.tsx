@@ -2,19 +2,18 @@ import type { Session } from '@supabase/supabase-js'
 
 export type TopBarProps = {
   title: string
-  showAvatar?: boolean
   user: Session['user'] | null
   menuOpen: boolean
   onToggleMenu: () => void
   onOpenMusic: () => void
 }
 
-export function TopBar({ title, showAvatar = true, user, menuOpen, onToggleMenu, onOpenMusic }: TopBarProps) {
+export function TopBar({ title, user, menuOpen, onToggleMenu, onOpenMusic }: TopBarProps) {
   return (
     <header className="top">
-      {showAvatar && <button className="avatar" aria-label="Tài khoản" aria-expanded={menuOpen} onClick={onToggleMenu}>
+      <button className="avatar" aria-label="Tài khoản" aria-expanded={menuOpen} onClick={onToggleMenu}>
         {user?.user_metadata?.avatar_url ? <img src={user.user_metadata.avatar_url} alt="" /> : <span aria-hidden="true">👤</span>}
-      </button>}
+      </button>
       <strong className="top-title">{title}</strong>
       <button className="ghost" onClick={(e) => { e.currentTarget.focus(); onOpenMusic() }}>Đổi nhạc <span aria-hidden="true">♪</span></button>
     </header>

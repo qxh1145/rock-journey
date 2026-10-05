@@ -15,7 +15,7 @@ export function PlayScreen({ game, answeredQuestion, selected, submitting, waiti
   statusMessage: string
   carving: { from: Stage; key: string } | null
   torn: { key: string; node: ReactNode } | null
-  topBar: Omit<TopBarProps, 'title' | 'showAvatar'>
+  topBar: Omit<TopBarProps, 'title'>
   onSelect: (id: string) => void
   onSubmit: () => void
   onNext: (feedbackPage: ReactNode) => void

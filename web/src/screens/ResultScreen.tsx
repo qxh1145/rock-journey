@@ -3,11 +3,11 @@ import { TopBar, type TopBarProps } from '../components/TopBar'
 import type { GameState } from '../game'
 
 export function ResultScreen({ game, topBar, onShowMedal, onReplay }: {
-  game: GameState; topBar: Omit<TopBarProps, 'title' | 'showAvatar'>; onShowMedal: () => void
+  game: GameState; topBar: Omit<TopBarProps, 'title'>; onShowMedal: () => void
   onReplay?: () => void
 }) {
   return <main className="screen result">
-    <TopBar title="Kết quả" showAvatar={false} {...topBar} />
+    <TopBar title="Kết quả" {...topBar} />
     <h1>Bạn đã hoàn thành!</h1>
     <p className="muted">Một tác phẩm, một khởi đầu mới.</p>
     <Mascot stage="FINISHED" small />
