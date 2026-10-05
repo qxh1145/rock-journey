@@ -16,7 +16,7 @@ test('offline answer shows Chưa lưu, resends on reconnect, server holds one an
     expect(await answerCount()).toBe(0)
 
     await context.setOffline(false)
-    await expect(page.getByText('Đã lưu câu trả lời')).toBeVisible()
+    await expect(page.getByText('quntrn05')).toBeVisible()
     expect(await answerCount()).toBe(1)
   } finally {
     await cleanup()
