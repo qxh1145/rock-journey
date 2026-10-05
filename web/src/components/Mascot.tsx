@@ -12,10 +12,27 @@ export function carveCaption(g: GameState, carvingFrom: Stage | null) {
   return `Tạc ${pct}% · Còn ${odd ? 1 : 2} câu nữa là đục tiếp`
 }
 
+// ảnh FX chỉ gắn vào DOM lúc đục → nếu không tải + giải mã trước, mạng di động lỡ mất máy xẻ/búa trong chuỗi 1,4s
+const FX = ['saw', 'chisel', 'hammer', 'debris-1', 'debris-2', 'debris-3', 'dust-1', 'dust-2', 'dust-3', 'dust-4', 'sparkle', 'sparkle-2']
+const warm = new Map<string, HTMLImageElement>()
+function preload(src: string) {
+  if (warm.has(src)) return
+  const img = new Image()
+  img.src = src
+  img.decode().catch(() => {})
+  warm.set(src, img)
+}
+
 export function Mascot({ stage, carving, onCarved, small }: {
   stage: Stage; carving?: { from: Stage; key: string } | null; onCarved?: () => void; small?: boolean
 }) {
   const [swapped, setSwapped] = useState(false)
+  useEffect(() => {
+    if (small) return
+    FX.forEach((n) => preload(`/assets/${n}.webp`))
+    const next = STAGES.indexOf(stage) + 2
+    if (next <= 7) preload(`/assets/stage-${next}.webp`)
+  }, [stage, small])
   useEffect(() => {
     if (!carving) return
     setSwapped(false)
