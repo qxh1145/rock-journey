@@ -33,7 +33,14 @@ test('showcase plays 4 states after Q12, its CTA opens the result, and a reload 
   await finishGame(page, async () => {
     await expect(showcase(page)).toBeVisible()
     const shownAt = Date.now()
-    for (const step of ['0', '1', '2', '3']) await expect(showcase(page)).toHaveAttribute('data-step', step, { timeout: 3000 })
+    // các bước Figma rất ngắn (bước 2 < 0.5s) nên ghi lại mọi giá trị data-step thay vì poll
+    await showcase(page).evaluate((el) => {
+      const seen = [el.getAttribute('data-step')]
+      ;(window as unknown as { seen: unknown }).seen = seen
+      new MutationObserver(() => seen.push(el.getAttribute('data-step'))).observe(el, { attributeFilter: ['data-step'] })
+    })
+    await expect(showcase(page)).toHaveAttribute('data-step', '3', { timeout: 6000 })
+    expect(await page.evaluate(() => (window as unknown as { seen: string[] }).seen)).toEqual(['0', '1', '2', '3'])
     expect(Date.now() - shownAt).toBeLessThan(6500) // AC: ends on the last state within ~6s (Figma flow: ~2.5s)
     await expect(page.getByRole('heading', { name: 'Từ một khối đá, có thể tạo nên bao nhiêu điều?' })).toBeVisible()
     await page.getByRole('button', { name: 'Xem kết quả và nhận quà' }).click()
