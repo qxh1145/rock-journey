@@ -3,12 +3,14 @@ import { useEffect, useRef, useState } from 'react'
 export type Track = { title: string; asset_url: string }
 type Sfx = 'click' | 'correct' | 'wrong' | 'saw' | 'chisel' | 'tear' | 'finish' | 'badge'
 
-const PREFS_KEY = 'rock-journey-audio'
-type Prefs = { music: boolean; sfx: boolean; track: string | null }
-const loadPrefs = (): Prefs => {
-  try { return { music: false, sfx: true, track: null, ...JSON.parse(localStorage.getItem(PREFS_KEY) ?? '{}') } } catch { return { music: false, sfx: true, track: null } }
+export const PREFS_KEY = 'rock-journey-audio'
+export type Prefs = { music: boolean; sfx: boolean; track: string | null }
+// FR-12: nhạc bật mặc định, phát ở tương tác đầu tiên
+export const DEFAULT_PREFS: Prefs = { music: true, sfx: true, track: null }
+export const loadPrefs = (): Prefs => {
+  try { return { ...DEFAULT_PREFS, ...JSON.parse(localStorage.getItem(PREFS_KEY) ?? '{}') } } catch { return { ...DEFAULT_PREFS } }
 }
-const savePrefs = (p: Prefs) => { try { localStorage.setItem(PREFS_KEY, JSON.stringify(p)) } catch { /* bỏ qua */ } }
+export const savePrefs = (p: Prefs) => { try { localStorage.setItem(PREFS_KEY, JSON.stringify(p)) } catch { /* bỏ qua */ } }
 
 // SFX: file /audio/sfx/<tên>.mp3; thiếu file thì phát beep tổng hợp để game vẫn có phản hồi
 const BEEP: Record<Sfx, [number, number]> = {

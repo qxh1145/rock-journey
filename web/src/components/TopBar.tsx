@@ -16,7 +16,7 @@ export function TopBar({ title, showAvatar = true, user, menuOpen, onToggleMenu,
         {user?.user_metadata?.avatar_url ? <img src={user.user_metadata.avatar_url} alt="" /> : <span aria-hidden="true">👤</span>}
       </button>}
       <strong className="top-title">{title}</strong>
-      <button className="ghost" onClick={onOpenMusic}>Đổi nhạc <span aria-hidden="true">♪</span></button>
+      <button className="ghost" onClick={(e) => { e.currentTarget.focus(); onOpenMusic() }}>Đổi nhạc <span aria-hidden="true">♪</span></button>
     </header>
   )
 }

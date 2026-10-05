@@ -128,7 +128,14 @@ function App() {
       })
       if (!r.ok || !r.data) {
         const action = rpcAction(r.code)
-        if (action === 'reload' || action === 'signin') { removeStore(pendingKey); return reload() }
+        if (action === 'reload') { removeStore(pendingKey); return reload() }
+        // phiên hết hạn → đăng xuất, onAuthStateChange đưa về landing; giữ pending để gửi lại sau
+        if (action === 'signin') return void supabase?.auth.signOut()
+        if (action === 'show') {
+          removeStore(pendingKey)
+          setWaitingSync(false)
+          return setStatusMessage(r.message ?? 'Không thể lưu câu trả lời.')
+        }
         throw new Error(r.message ?? 'Không thể lưu câu trả lời.')
       }
       removeStore(pendingKey)

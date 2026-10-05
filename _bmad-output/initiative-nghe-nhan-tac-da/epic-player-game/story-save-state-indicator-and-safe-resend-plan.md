@@ -3,7 +3,7 @@ title: 'Save state indicator and safe resend'
 type: 'feature'
 ticket: '3'
 created: '2026-10-05'
-status: 'in-progress'
+status: 'built'
 baseline_revision: '6656092417df671a74cda9b1e7515e1e2b67927e'
 route: 'oneshot'
 route_source: 'auto'
@@ -35,3 +35,14 @@ Oneshot route: about 80 lines across game.ts, main.tsx, PlayScreen.tsx, one e2e 
 - `npm test` (web) -- expected: mapper + optText tests pass
 - `npx tsc -b && npm run build` (web) -- expected: no errors
 - `npx playwright test` (web, needs staging env) -- expected: offline spec shows Chưa lưu, resends on reconnect, 1 answer row
+
+Resumed 2026-10-05: the "up" commit already held the implementation. Review patch: `signin` now signs out (keeps pending), and `show` codes display `message` instead of the retry state. Playwright offline spec not run locally (needs staging env vars).
+
+## Review Triage Log
+
+- UNAUTHENTICATED reloaded → error screen, pending dropped — medium, patched: signOut, keep pending.
+- show codes (INVALID_OPTION/FORBIDDEN) treated as Chưa lưu + auto-resend — medium, patched: show message, clear pending.
+- retry codes never auto-retry when already online — low/medium, deferred: manual retry button works; backoff loop is extra scope.
+- NOT_FOUND → reload — false: contract says "Show message / reload".
+- e2e doesn't prove idempotency-key reuse — medium test gap, deferred.
+- no explicit Đã lưu status — low, rejected: the feedback footnote already shows "Đã lưu câu trả lời".
