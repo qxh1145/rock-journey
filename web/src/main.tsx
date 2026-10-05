@@ -4,7 +4,7 @@ import type { Session } from '@supabase/supabase-js'
 import { supabase } from './lib/supabase'
 import { sfx, useMusic, type Track } from './audio'
 import {
-  BADGE_KEY, CHISEL_KEY, CONFLICT, callRpc, message, readStore, removeStore, writeStore,
+  BADGE_KEY, CHISEL_KEY, callRpc, rpcAction, message, readStore, removeStore, writeStore,
   type GameState, type PendingAnswer, type Question, type Screen, type Stage,
 } from './game'
 import { AvatarMenu } from './components/TopBar'
@@ -82,7 +82,7 @@ function App() {
     const pending = readStore<PendingAnswer | null>(`rock-journey-pending:${game.session_id}:${game.question.question_id}`, null)
     setSelected(pending?.option ?? null)
     setWaitingSync(Boolean(pending))
-    setStatusMessage(pending ? 'Có câu trả lời chưa được xác nhận. Bấm để đồng bộ lại.' : '')
+    setStatusMessage(pending ? 'Chưa lưu — có câu trả lời chưa được xác nhận, bấm để đồng bộ lại.' : '')
   }, [screen, game?.session_id, game?.question?.question_id, game?.answer])
 
   // mở huy chương một lần khi vừa đạt danh hiệu
@@ -115,15 +115,20 @@ function App() {
     // giữ cùng idempotency key cho tới khi server xác nhận
     const pending = previous?.option === selected ? previous : { option: selected, key: crypto.randomUUID() }
     writeStore(pendingKey, pending)
+    if (!navigator.onLine) {
+      setWaitingSync(true)
+      return setStatusMessage('Chưa lưu — đang ngoại tuyến, sẽ tự gửi lại khi có mạng.')
+    }
     setSubmitting(true)
-    setStatusMessage('Đang gửi…')
+    setStatusMessage('Đang lưu…')
     try {
       const r = await callRpc<GameState>('submit_answer', {
         p_session_id: game.session_id, p_question_id: question.question_id,
         p_option_id: pending.option, p_idempotency_key: pending.key,
       })
       if (!r.ok || !r.data) {
-        if (CONFLICT.includes(r.code)) { removeStore(pendingKey); return reload() }
+        const action = rpcAction(r.code)
+        if (action === 'reload' || action === 'signin') { removeStore(pendingKey); return reload() }
         throw new Error(r.message ?? 'Không thể lưu câu trả lời.')
       }
       removeStore(pendingKey)
@@ -141,11 +146,21 @@ function App() {
       }
     } catch (e) {
       setWaitingSync(true)
-      setStatusMessage(`${message(e, 'Mất kết nối')} — lựa chọn vẫn được giữ, bấm để đồng bộ lại.`)
+      setStatusMessage(`Chưa lưu — ${message(e, 'Mất kết nối')}. Lựa chọn vẫn được giữ, bấm để đồng bộ lại.`)
     } finally {
       setSubmitting(false)
     }
   }
+
+  // có mạng lại → tự gửi lại câu chưa lưu (cùng idempotency key nên server chỉ giữ một bản)
+  const submitRef = useRef(submitAnswer)
+  submitRef.current = submitAnswer
+  useEffect(() => {
+    if (!waitingSync) return
+    const onOnline = () => void submitRef.current()
+    window.addEventListener('online', onOnline)
+    return () => window.removeEventListener('online', onOnline)
+  }, [waitingSync])
 
   function next(feedbackPage: ReactNode) {
     if (!game) return

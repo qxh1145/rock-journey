@@ -57,7 +57,7 @@ export function PlayScreen({ game, answeredQuestion, selected, submitting, waiti
         ? <><button className="primary" onClick={() => onNext(feedbackPage)}>{game.status === 'COMPLETED' ? 'Xem kết quả' : `Tiếp tục câu ${game.answered_count + 1}`}</button>
             <p className="footnote">Đã lưu câu trả lời · Tiến độ được giữ nguyên</p></>
         : <><button className="primary" disabled={!selected || submitting || Boolean(torn)} onClick={onSubmit}>
-              {submitting ? 'Đang gửi…' : waitingSync ? 'Thử đồng bộ lại' : 'Chốt đáp án'}</button>
+              {submitting ? 'Đang lưu…' : waitingSync ? 'Thử đồng bộ lại' : 'Chốt đáp án'}</button>
             <p className={waitingSync ? 'footnote error' : 'footnote'} role="status">{statusMessage || 'Sau khi chốt, bạn không thể trả lời lại.'}</p></>}
     </div>
   </main>
