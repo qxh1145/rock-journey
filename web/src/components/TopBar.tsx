@@ -12,7 +12,7 @@ export function TopBar({ title, user, menuOpen, onToggleMenu, onOpenMusic }: Top
   return (
     <header className="top">
       <button className="avatar" aria-label="Tài khoản" aria-expanded={menuOpen} onClick={onToggleMenu}>
-        {user?.user_metadata?.avatar_url ? <img src={user.user_metadata.avatar_url} alt="" /> : <span aria-hidden="true">👤</span>}
+        {user?.user_metadata?.avatar_url ? <img src={user.user_metadata.avatar_url} alt="" /> : <img className="avatar-default" src="/assets/avatar.svg" alt="" />}
       </button>
       <strong className="top-title">{title}</strong>
       <button className="ghost" onClick={(e) => { e.currentTarget.focus(); onOpenMusic() }}>Đổi nhạc <span aria-hidden="true">♪</span></button>

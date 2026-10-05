@@ -25,7 +25,7 @@ export function PlayScreen({ game, answeredQuestion, selected, submitting, waiti
   const feedbackPage = game.answer && answeredQuestion ? <Notebook>
     <p className="q">{answeredQuestion.prompt}</p>
     {!game.answer.is_correct && <p className="nb-wrong">× {optText(answeredQuestion, selected)} — Chưa chính xác</p>}
-    <p className="nb-right">✓ {optText(answeredQuestion, game.answer.correct_option_id)} — {game.answer.is_correct ? 'Chính xác!' : 'Đáp án đúng'}</p>
+    <p className={game.answer.is_correct ? 'nb-right ok' : 'nb-right'}>✓ {optText(answeredQuestion, game.answer.correct_option_id)} — {game.answer.is_correct ? 'Chính xác!' : 'Đáp án đúng'}</p>
     <p className="nb-explain">{game.answer.explanation}</p>
   </Notebook> : null
 
@@ -33,7 +33,7 @@ export function PlayScreen({ game, answeredQuestion, selected, submitting, waiti
     <TopBar title={`Câu ${Math.min(game.answer ? game.answered_count : game.answered_count + 1, 12)}/12`} {...topBar} />
     <div className="track"><div style={{ width: `${(game.answered_count / 12) * 100}%` }} /></div>
     <Mascot stage={game.mascot_stage} carving={carving} onCarved={onCarved} />
-    <p className="caption">{carveCaption(game, Boolean(carving))}</p>
+    <p className="caption">{carveCaption(game, carving?.from ?? null)}</p>
 
     <div className="nb-stack">
     {feedbackPage ?? (game.question ? <Notebook key={game.question.question_id}>
