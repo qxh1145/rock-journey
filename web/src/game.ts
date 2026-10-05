@@ -44,4 +44,14 @@ export async function callRpc<T>(name: string, args?: Record<string, unknown>): 
   return data as RpcResponse<T>
 }
 
+// Phản ứng của client theo docs/rpc-error-codes.md — chỉ rẽ nhánh theo code, không theo message
+export type RpcAction = 'reload' | 'retry' | 'signin' | 'show'
+const RELOAD = [...CONFLICT, 'CONFLICT', 'SESSION_ALREADY_EXISTS', 'NOT_FOUND']
+export function rpcAction(code: string): RpcAction {
+  if (RELOAD.includes(code)) return 'reload'
+  if (code === 'DATABASE_UNAVAILABLE' || code === 'RATE_LIMITED') return 'retry'
+  if (code === 'UNAUTHENTICATED') return 'signin'
+  return 'show'
+}
+
 export const optText = (q: Question, id: string | null) => q.options.find((o) => o.id === id)?.text ?? ''

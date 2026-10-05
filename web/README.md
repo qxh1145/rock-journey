@@ -16,6 +16,17 @@ The local Supabase Auth `site_url` already uses port 3000. Configure Google OAut
 - `npm run typecheck` — TypeScript project check
 - `npm run build` — TypeScript check and production build
 - `npm run preview` — preview the production build
+- `npm test` — Vitest unit tests
+- `npm run e2e` — Playwright mobile (390x844) journey against the **staging** Supabase project
+
+### e2e
+
+Needs `npx playwright install chromium` once, plus env vars (never commit them):
+
+- `VITE_SUPABASE_KEY` — staging publishable/anon key
+- `SUPABASE_STAGING_SERVICE_ROLE_KEY` — staging service-role key; used only by the test to create and delete a confirmed `e2e-*` throwaway user per run
+
+The app is built and served with `vite preview` against `awvaujmkbstkpsbaxpku` (URL is fixed in `playwright.config.ts`).
 
 ## Environments
 
@@ -28,4 +39,4 @@ CI runs migrations; for a manual `supabase db push`, it goes to whichever projec
 
 ## CI/CD
 
-Every push runs `.github/workflows/deploy.yml`: SQL smoke tests + web build, then `supabase db push` to staging (any non-`main` branch) or production (`main`). Web deploys via the Vercel Git integration (branch → Preview, `main` → Production). Repo secrets: `SUPABASE_ACCESS_TOKEN`, `SUPABASE_STAGING_DB_PASSWORD`, `SUPABASE_PROD_DB_PASSWORD`.
+Every push runs `.github/workflows/deploy.yml`: SQL smoke tests + web build, then `supabase db push` to staging (any non-`main` branch) or production (`main`). Web deploys via the Vercel Git integration (branch → Preview, `main` → Production). Repo secrets: `SUPABASE_ACCESS_TOKEN`, `SUPABASE_STAGING_DB_PASSWORD`, `SUPABASE_PROD_DB_PASSWORD`, `SUPABASE_STAGING_PUBLISHABLE_KEY`, `SUPABASE_STAGING_SERVICE_ROLE_KEY` (the last two feed the non-`main` `e2e` job).
