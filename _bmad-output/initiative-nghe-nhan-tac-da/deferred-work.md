@@ -10,3 +10,6 @@
 - source_plan: `/Users/quan/Work/rock-journey/_bmad-output/initiative-nghe-nhan-tac-da/epic-platform-baseline/story-staging-environment-tracer-bullet-plan.md`
   summary: Document in web/README.md that the Supabase CLI is linked to staging (ref awvaujmkbstkpsbaxpku) so a later db push does not surprise anyone.
   evidence: Only the plan file records the link; quick review flagged it.
+- source_plan: `_bmad-output/initiative-nghe-nhan-tac-da/epic-platform-baseline/story-ci-cd-auto-deploy-plan.md`
+  summary: Shared migrate-staging concurrency group can cancel another branch's pending staging migration.
+  evidence: GitHub keeps one pending run per concurrency group; a push on branch A cancels branch B's queued migrate job while B's Vercel Preview still goes live.

@@ -1,4 +1,4 @@
--- Chạy: createdb rj_test && psql rj_test -v ON_ERROR_STOP=1 -f supabase/tests/stub_auth.sql -f supabase/migrations/*.sql -f supabase/tests/smoke.sql
+-- Chạy: createdb rj_test && psql rj_test -v ON_ERROR_STOP=1 -f supabase/tests/stub_auth.sql $(printf -- '-f %s ' supabase/migrations/*.sql) -f supabase/tests/smoke.sql
 insert into auth.users values ('00000000-0000-0000-0000-000000000001','P1@Mail.com',now(),'{}'),
                               ('00000000-0000-0000-0000-000000000002','admin@x.com',now(),'{}');
 insert into admin_roles (user_id,email_normalized,role) values ('00000000-0000-0000-0000-000000000002','admin@x.com','admin');

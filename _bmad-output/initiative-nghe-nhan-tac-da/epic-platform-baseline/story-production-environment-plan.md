@@ -58,4 +58,5 @@ Steps (human-in-the-loop, outward-facing):
 Pass 1 (quick): high 0, medium 0, low 2, false 1.
 - low — patched: README `cat supabase/.temp/project-ref` is root-relative but sits in `web/README.md`; now says "from the repo root" and what a missing file means.
 - low — rejected: README OAuth line doesn't name a project; docs-only, the new table already maps environments.
-- false: migration check unrecorded — `migration list --linked` showed all 3 remote after push (now in Progress). Manual Google sign-in on prod is pending the user.
+- false: migration check unrecorded — `migration list --linked` showed all 3 remote after push (now in Progress). Manual Google sign-in on prod passed (user, 2026-10-05).
+- Post-review fixes: Google OAuth client lacked the prod callback (redirect_uri_mismatch), added by user; Vercel Root Directory changed `.` → `web` so Git builds find `package.json`; CLI deploys now run from the repo root.

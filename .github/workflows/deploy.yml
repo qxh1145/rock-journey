@@ -1,0 +1,51 @@
+name: deploy
+
+on:
+  push:
+    branches: ['**']
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_PASSWORD: postgres
+        ports: ['5432:5432']
+        options: --health-cmd pg_isready --health-interval 5s --health-retries 10
+    env:
+      PGHOST: localhost
+      PGUSER: postgres
+      PGPASSWORD: postgres
+    steps:
+      - uses: actions/checkout@v4
+      - name: SQL smoke tests
+        run: |
+          createdb rj_test
+          psql rj_test -v ON_ERROR_STOP=1 -f supabase/tests/stub_auth.sql $(printf -- '-f %s ' supabase/migrations/*.sql) -f supabase/tests/smoke.sql
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+      - name: Web build
+        working-directory: web
+        run: npm ci && npm run build
+
+  migrate:
+    needs: smoke
+    runs-on: ubuntu-latest
+    # Web is deployed by the Vercel Git integration; this job only migrates the matching database.
+    concurrency: migrate-${{ github.ref == 'refs/heads/main' && 'prod' || 'staging' }}
+    env:
+      SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+      PROJECT_REF: ${{ github.ref == 'refs/heads/main' && 'xmkkkuepzhgcqpjbzrwe' || 'awvaujmkbstkpsbaxpku' }}
+      DB_PASSWORD: ${{ github.ref == 'refs/heads/main' && secrets.SUPABASE_PROD_DB_PASSWORD || secrets.SUPABASE_STAGING_DB_PASSWORD }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: supabase/setup-cli@v1
+        with:
+          version: latest
+      - run: supabase link --project-ref "$PROJECT_REF" -p "$DB_PASSWORD"
+      - run: supabase db push --yes -p "$DB_PASSWORD"

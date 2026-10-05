@@ -21,7 +21,11 @@ The local Supabase Auth `site_url` already uses port 3000. Configure Google OAut
 
 | | Supabase project | Vercel |
 |---|---|---|
-| Staging | `rock-journey-staging` (`awvaujmkbstkpsbaxpku`) | Preview deploys (`vercel deploy`) |
-| Production | `rock-journey` (`xmkkkuepzhgcqpjbzrwe`) | `vercel --prod` → https://rock-journey.vercel.app |
+| Staging | `rock-journey-staging` (`awvaujmkbstkpsbaxpku`) | Preview deploys (any non-`main` branch push) |
+| Production | `rock-journey` (`xmkkkuepzhgcqpjbzrwe`) | merge to `main` → https://rock-journey.vercel.app |
 
-`supabase db push` goes to whichever project the CLI is linked to. From the repo root, run `cat supabase/.temp/project-ref` before pushing (missing = not linked), and switch with `supabase link --project-ref <ref>`.
+CI runs migrations; for a manual `supabase db push`, it goes to whichever project the CLI is linked to. From the repo root, run `cat supabase/.temp/project-ref` before pushing (missing = not linked), and switch with `supabase link --project-ref <ref>`.
+
+## CI/CD
+
+Every push runs `.github/workflows/deploy.yml`: SQL smoke tests + web build, then `supabase db push` to staging (any non-`main` branch) or production (`main`). Web deploys via the Vercel Git integration (branch → Preview, `main` → Production). Repo secrets: `SUPABASE_ACCESS_TOKEN`, `SUPABASE_STAGING_DB_PASSWORD`, `SUPABASE_PROD_DB_PASSWORD`.
