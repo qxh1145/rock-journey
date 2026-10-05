@@ -3,7 +3,7 @@ title: 'Staging environment (tracer bullet)'
 type: 'chore'
 ticket: '4'
 created: '2026-10-05'
-status: 'in-progress'
+status: 'built'
 baseline_revision: '1de96b4975aca78447cd4a4a4cef029694896d3e'
 route: 'oneshot'
 route_source: 'auto'
@@ -66,3 +66,4 @@ Pass 1 (quick): high 1, medium 0, low 3, false 4.
 - low — patched: `web/.gitignore` `.env*` would hide new `.env.*.example` templates; line removed (`.env.local` already listed).
 - low — deferred: unintended Production deploy at `rock-journey.vercel.app` with no env; story 5 redeploys production.
 - low — deferred: no README note that the CLI is linked to staging.
+- high HALT resolved: user narrowed staging redirect allow-list to `https://*-qxh1145s-projects.vercel.app/**` (2026-10-05).
