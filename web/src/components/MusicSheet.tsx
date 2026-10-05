@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, type CSSProperties } from 'react'
 import { type useMusic, type Track } from '../audio'
 
 export function MusicSheet({ music, tracks, onClose }: { music: ReturnType<typeof useMusic>; tracks: Track[]; onClose: () => void }) {
@@ -35,7 +35,7 @@ export function MusicSheet({ music, tracks, onClose }: { music: ReturnType<typeo
           <button className="play" aria-label={music.playing ? 'Tạm dừng' : 'Phát'} onClick={music.toggle}>{music.playing ? '⏸' : '▶'}</button>
           <button aria-label="Bài sau" onClick={() => music.select(tracks[(idx + 1) % tracks.length].asset_url)}>⏭</button>
         </div>
-        <input type="range" aria-label="Vị trí bài hát" min={0} max={music.duration || 0} step={1} value={music.time} onChange={(e) => music.seek(+e.target.value)} />
+        <input type="range" style={{ '--p': `${music.duration ? (music.time / music.duration) * 100 : 0}%` } as CSSProperties} aria-label="Vị trí bài hát" min={0} max={music.duration || 0} step={1} value={music.time} onChange={(e) => music.seek(+e.target.value)} />
         <div className="times"><span>{fmt(music.time)}</span><span>-{fmt(music.duration - music.time)}</span></div>
         <p className="label">DANH SÁCH PHÁT</p>
         <div role="radiogroup" aria-label="Danh sách phát">

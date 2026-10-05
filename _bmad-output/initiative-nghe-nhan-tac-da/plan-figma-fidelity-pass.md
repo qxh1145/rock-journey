@@ -3,14 +3,14 @@ title: 'Figma fidelity pass — 390×844 stage, screen geometry, carve motion'
 type: 'bugfix'
 ticket: ''
 created: '2026-10-06'
-status: 'draft'
-baseline_revision: ''
+status: 'built'
+baseline_revision: 'e6b7ce63ce30ed48c687fd835f64e98a2b71e67b'
 route: 'full'
 route_source: 'auto'
 risk: 'medium'
-review: ''
-review_source: ''
-lenses_ran: []
+review: 'quick'
+review_source: 'pinned'
+lenses_ran: [quick]
 review_loop_iteration: 0
 context: []
 ---
@@ -57,7 +57,7 @@ context: []
 - [ ] `web/src/main.tsx`, `web/src/style.css` -- `.phone` = 390×844, `position:relative`, `transform:scale(var(--s))`, centered; set `--s` from one resize listener; `.overlay`/`.sheet-backdrop` → `position:absolute` within the stage; remove vh/vw/dvh units inside screens.
 - [ ] Each screen -- pull `get_design_context` per frame (2:2, 2:22, 2:60, 2:93, 2:121, 7:2, 21:165) for exact typography, then apply absolute y/size values. Known deltas: Start eyebrow y30, h1 34/41px at y80, mascot 268×190 @ (61,283), rules gap 12 @ y491, CTA y680. Play: avatar x14, stone 350×255 @ y111, caption y372, paper 350×326 @ y408, button y748. Result: no avatar, stone 166×158 @ (112,199), one button y690. Sheet: 390×680 @ y164, dim #00000059, grabber 44×5, transport 72×64, rows 52px, styled seek (4px track/20px thumb). Medal: dim #1c1c1ef0, badge 250×289 @ y226, caption y557, button y711.
 - [ ] `web/src/components/Mascot.tsx`, `style.css` -- FX canvas 390×394 at stage top, overflow visible; stone 350×259 @ (20,107) → final 348×296 @ (21,70). Saw path (365,6)→(270,46)→(230,96)→back. Chisel 60px, no rotation, (120,50)→(161,135)→back. Hammer 132px, (224,49)→(158,100)→strike (171,170) with rotate/squash. Small/large/ground dust growing to 180×104 / 440×273 @(-25,42) / 380×205 @(10,247). 3 debris pieces flung to (315,300),(42,348),(259,302); ground pile behind stone. Rock spark 40×33→130×108. Sparkle on every stage reveal. Shake x and y ±2–4px. Keyframe timing on the existing 1.4s: 01–03 0–30%, 04 ~35%, 07 ~61%, 10 68–100%.
-- [ ] Missing assets (rock spark, dust variants, ground pile, sparkle 2) -- export from Figma via `download_assets` into `web/public/assets/`.
+- [ ] Assets -- source from `/Users/quan/Desktop/web game/` (user decision), convert PNG→webp into `web/public/assets/`: `đá lấp lánh.png` = rock spark, `lấp lánh.png`/`lấp lánh 2.png` = sparkle 1/2, `bụi đá 1-4.png` = small/large/ground dust, `đá vụn 1-3.png` = debris + ground pile, `máy xẻ đá`/`đồ đục`/`búa` = tools, `1-7.png` = stages. Replace existing files with these where they differ.
 
 **Acceptance Criteria:**
 - Given a 390×844 viewport, when each screen renders, then a screenshot overlay against the Figma frame shows element boxes within ±2px.
@@ -69,6 +69,18 @@ context: []
 ## Plan Change Log
 
 ## Review Triage Log
+
+Pass 1 (quick): high 0 / medium 4 / low 2 / false 3 / maybe-false 1
+- medium · patch — carve-stone keyframe jumps vs resting stone geometry at start/end; confirmed by comparing keyframe 0%/100% with `.play .stone`.
+- medium · patch — hammer has one strike but chisel SFX fire at 600 and 850ms; confirmed in Mascot.tsx timers vs keyframes.
+- medium · patch — reduced-motion still animates stone size/position (global rule only shortens duration).
+- medium · patch — `.rotate-hint` position:fixed now contained by transformed `.phone`.
+- low · patch — Result two-button case overflows 844 and is clipped (replay account only).
+- low · patch — `env(safe-area-inset-bottom)` padding inside fixed stage.
+- maybe-false · rejected (low) — `.start .error` may reach CTA if wrapping; would need a long-error screenshot.
+- false — frames 2:60/21:165 unaddressed: both are PlayScreen states and inherit the `.play` geometry.
+- false — Result should show one button: replay is an existing conditional feature; Figma shows the default case.
+- false — plan lacks verification evidence: verification is collected at step 5, not in-plan.
 
 ## Verification
 

@@ -29,7 +29,7 @@ export function PlayScreen({ game, answeredQuestion, selected, submitting, waiti
     <p className="nb-explain">{game.answer.explanation}</p>
   </Notebook> : null
 
-  return <main className="screen">
+  return <main className="screen play">
     <TopBar title={`Câu ${Math.min(game.answer ? game.answered_count : game.answered_count + 1, 12)}/12`} {...topBar} />
     <div className="track"><div style={{ width: `${(game.answered_count / 12) * 100}%` }} /></div>
     <Mascot stage={game.mascot_stage} carving={carving} onCarved={onCarved} />

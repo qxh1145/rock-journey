@@ -219,8 +219,8 @@ function App() {
   const topBar = { user, menuOpen, onToggleMenu: () => setMenuOpen((v) => !v), onOpenMusic: () => setMusicOpen(true) }
 
   return (
+    <><div className="rotate-hint" role="alert">Vui lòng xoay dọc điện thoại để chơi.</div>
     <div className="phone">
-      <div className="rotate-hint" role="alert">Vui lòng xoay dọc điện thoại để chơi.</div>
 
       {screen === 'loading' && <p className="center muted" role="status">Đang tải hành trình…</p>}
 
@@ -255,8 +255,12 @@ function App() {
       {musicOpen && <MusicSheet music={music} tracks={tracks} onClose={() => setMusicOpen(false)} />}
 
       {badgeOpen && <MedalOverlay onClose={() => setBadgeOpen(false)} />}
-    </div>
+    </div></>
   )
 }
 
+// khung Figma 390×844 co giãn vừa viewport (min-zoom)
+const fit = () => document.documentElement.style.setProperty('--s', String(Math.min(innerWidth / 390, innerHeight / 844)))
+fit()
+addEventListener('resize', fit)
 ReactDOM.createRoot(document.getElementById('root')!).render(<App />)

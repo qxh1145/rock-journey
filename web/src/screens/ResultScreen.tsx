@@ -6,8 +6,8 @@ export function ResultScreen({ game, topBar, onShowMedal, onReplay }: {
   game: GameState; topBar: Omit<TopBarProps, 'title' | 'showAvatar'>; onShowMedal: () => void
   onReplay?: () => void
 }) {
-  return <main className="screen">
-    <TopBar title="Kết quả" {...topBar} />
+  return <main className="screen result">
+    <TopBar title="Kết quả" showAvatar={false} {...topBar} />
     <h1>Bạn đã hoàn thành!</h1>
     <p className="muted">Một tác phẩm, một khởi đầu mới.</p>
     <Mascot stage="FINISHED" small />
@@ -22,8 +22,8 @@ export function ResultScreen({ game, topBar, onShowMedal, onReplay }: {
     </section>
     <div className="bottom">
       {game.title === 'MAM_NGHE' && <button className="primary" onClick={onShowMedal}>Xem lại huy chương</button>}
-      <p className="footnote left">Lượt chơi đã hoàn tất. Khi quay lại, bạn có thể xem kết quả và trạng thái quà.</p>
       {onReplay && <button className="primary" onClick={onReplay}>Chơi lại</button>}
+      <p className="footnote left">Lượt chơi đã hoàn tất. Khi quay lại, bạn có thể xem kết quả và trạng thái quà.</p>
     </div>
   </main>
 }

@@ -1,7 +1,7 @@
 import { Mascot } from '../components/Mascot'
 
 export function StartScreen({ error, cta, onCta }: { error: string; cta: string; onCta: () => void }) {
-  return <main className="screen">
+  return <main className="screen start">
     <p className="eyebrow">NGHỆ NHÂN TẠC ĐÁ</p>
     <h1>Từ khối đá thô,<br />đến một tác phẩm.</h1>
     <p className="muted">Khám phá nghề tạc đá qua 12 câu hỏi. Mỗi câu đúng giúp tác phẩm thành hình.</p>

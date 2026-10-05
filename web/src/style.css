@@ -6,15 +6,15 @@
   color-scheme: light;
 }
 * { box-sizing: border-box; }
-html, body { margin: 0; background: var(--bg); color: var(--fg); font: 16px/1.45 'Be Vietnam Pro', system-ui, sans-serif; }
+html, body { margin: 0; height: 100%; overflow: hidden; background: var(--bg); color: var(--fg); font: 16px/1.45 'Be Vietnam Pro', system-ui, sans-serif; }
 button, input { font: inherit; color: inherit; }
 button { cursor: pointer; }
 button:focus-visible, input:focus-visible { outline: 3px solid var(--green); outline-offset: 2px; }
 img { max-width: 100%; }
 
-.phone { position: relative; max-width: 430px; min-height: 100dvh; margin: 0 auto; overflow: hidden; }
-.screen { min-height: 100dvh; padding: 16px 20px calc(24px + env(safe-area-inset-bottom)); display: flex; flex-direction: column; gap: 10px; }
-.center { text-align: center; padding-top: 40vh; }
+.phone { position: absolute; left: 50%; top: 50%; width: 390px; height: 844px; margin: -422px 0 0 -195px; overflow: hidden; transform: scale(var(--s, 1)); }
+.screen { height: 844px; padding: 16px 20px 24px; display: flex; flex-direction: column; gap: 10px; }
+.center { text-align: center; padding-top: 340px; }
 .muted { color: var(--muted); margin: 0; }
 .small { font-size: .8rem; margin: 0; }
 .error { color: var(--bad); }
@@ -42,36 +42,52 @@ h2 { font-size: 1.05rem; margin: 0; }
 .track div { height: 100%; background: var(--green); border-radius: 2px; transition: width .4s; }
 .caption { text-align: center; color: var(--muted); font-size: .8rem; margin: -6px 0 0; }
 
-/* mascot + animation đục */
-.mascot { position: relative; height: 255px; display: grid; place-items: center; }
-.mascot.small { height: 170px; }
+/* mascot + animation đục — toạ độ Figma 64:873–64:1363 (canvas FX 390×394 ở đỉnh khung) */
+.mascot { position: relative; height: 255px; }
 .stone { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; animation: fade-in .25s ease-out; }
-.fx { position: absolute; pointer-events: none; opacity: 0; }
-.saw { width: 150px; right: -4%; top: 4%; animation: saw 1.4s ease-out; }
-.chisel { width: 70px; left: 52%; top: 18%; rotate: 25deg; animation: chisel 1.4s ease-out; }
-.hammer { width: 90px; left: 58%; top: 0; transform-origin: 80% 90%; animation: hammer 1.4s ease-in-out; }
-.dust { width: 85%; top: 15%; animation: dust 1.4s ease-out; }
-.debris { width: 60%; bottom: 0; animation: debris 1.4s ease-in; }
-.sparkle { width: 90%; top: 0; animation: sparkle 1.6s ease-out; }
-.carving .stone { animation: shake 1.4s; }
+.fx { position: absolute; pointer-events: none; opacity: 0; animation: 1.4s ease-out both; }
+.saw { left: 365px; top: 6px; width: 150px; animation-name: saw; }
+.chisel { left: 120px; top: 50px; width: 60px; animation-name: chisel; }
+.hammer { left: 224px; top: 49px; width: 132px; transform-origin: 85% 85%; animation-name: hammer; animation-timing-function: ease-in-out; }
+.spark { left: 262px; top: 123px; width: 40px; animation-name: spark; }
+.small-dust { left: 185px; top: 198px; width: 60px; animation-name: small-dust; }
+.large-dust { left: 140px; top: 203px; width: 120px; animation-name: large-dust; }
+.ground-dust { left: 100px; top: 286px; width: 200px; animation-name: ground-dust; }
+.debris-1 { left: 270px; top: 145px; width: 30px; --to: 45px 155px; animation-name: fling; animation-timing-function: ease-in; }
+.debris-2 { left: 194px; top: 199px; width: 40px; --to: -152px 149px; animation-name: fling; animation-timing-function: ease-in; }
+.debris-3 { left: 194px; top: 204px; width: 40px; --to: 65px 98px; animation-name: fling; animation-timing-function: ease-in; }
+.pile { left: 100px; top: 283px; width: 40px; animation-name: pile; }
+.sparkle { left: 95px; top: 130px; width: 200px; animation-name: sparkle; }
+.sparkle-2 { left: 65px; top: 132px; width: 260px; animation-delay: .1s; }
+.play .carving .stone { animation: carve-stone 1.4s ease-out, shake 1.4s; }
 @keyframes fade-in { from { opacity: 0; } }
-/* 0–32%: máy xẻ vào, cắt, rút ra */
+/* 01–03 (0–30%): máy xẻ (365,6)→(270,46)→(230,96)→ rút về */
 @keyframes saw {
-  0% { opacity: 0; translate: 60px -20px; } 6% { opacity: 1; translate: 0 0; }
-  10%, 18%, 26% { translate: -3px 2px; } 14%, 22% { translate: 2px -1px; }
-  30% { opacity: 1; translate: 0 0; } 36%, 100% { opacity: 0; translate: 60px -20px; }
-}
-/* 34–70%: đổi sang đục + búa gõ 2 nhát */
-@keyframes chisel { 0%, 32% { opacity: 0; } 36%, 75% { opacity: 1; } 85%, 100% { opacity: 0; } }
-@keyframes hammer {
-  0%, 32% { opacity: 0; rotate: -35deg; } 36% { opacity: 1; rotate: -35deg; } 43% { rotate: 5deg; }
-  52% { rotate: -35deg; } 61% { rotate: 5deg; } 75% { opacity: 1; } 85%, 100% { opacity: 0; rotate: -20deg; }
-}
-/* đá văng khi cắt sâu, bụi phủ sau nhát búa 2 rồi tan */
-@keyframes debris { 0%, 15% { opacity: 0; translate: 0 -30px; } 25% { opacity: 1; } 40% { opacity: 0; translate: 0 10px; } 62% { opacity: 0; translate: 0 -20px; } 72% { opacity: 1; } 100% { opacity: 0; translate: 0 10px; } }
-@keyframes dust { 0%, 58% { opacity: 0; scale: .6; } 70% { opacity: 1; scale: 1; } 100% { opacity: 0; scale: 1.15; } }
-@keyframes sparkle { 0%, 60% { opacity: 0; } 78% { opacity: 1; } 100% { opacity: 0; } }
-@keyframes shake { 10%, 20%, 43%, 61% { translate: -3px 0; } 15%, 25%, 46%, 64% { translate: 3px 0; } 0%, 30%, 70%, 100% { translate: 0; } }
+  0% { opacity: 1; translate: 0 0; } 10% { translate: -95px 40px; } 16%, 24% { translate: -132px 88px; } 20% { translate: -138px 92px; }
+  26% { opacity: 1; translate: -135px 90px; } 30% { opacity: 1; translate: 0 0; } 31%, 100% { opacity: 0; translate: 0 0; } }
+/* 04 (~35%): đổi sang đục (120,50)→(161,135) + búa (224,49)→(158,100), 07 (~61%) búa giáng (171,170) */
+@keyframes chisel { 0%, 31% { opacity: 0; translate: 0 0; } 35% { opacity: 1; translate: 0 0; } 45%, 66% { opacity: 1; translate: 41px 85px; }
+  80% { opacity: 1; translate: 0 0; } 86%, 100% { opacity: 0; translate: 0 0; } }
+@keyframes hammer { 0%, 31% { opacity: 0; translate: 0 0; rotate: 0deg; scale: 1; } 35% { opacity: 1; translate: 0 0; rotate: 0deg; }
+  39% { translate: -66px 51px; rotate: -30deg; scale: 1; } 43% { translate: -53px 121px; rotate: 8deg; scale: 1.08 .9; }
+  52% { translate: -66px 51px; rotate: -30deg; scale: 1; } 61% { translate: -53px 121px; rotate: 8deg; scale: 1.08 .9; }
+  68% { opacity: 1; translate: -66px 51px; rotate: -15deg; scale: 1; } 86%, 100% { opacity: 0; translate: 0 0; rotate: 0deg; } }
+/* tia đá 40×33 → 130×108 lúc máy cắt sâu và lúc búa giáng */
+@keyframes spark { 0%, 12% { opacity: 0; scale: 1; } 20% { opacity: 1; scale: 3.25; } 30%, 58% { opacity: 0; scale: 1; }
+  63% { opacity: 1; scale: 3.25; } 72%, 100% { opacity: 0; scale: 3.25; } }
+/* bụi nhỏ → 180×104, bụi lớn → 440×273 @(-25,42), bụi mặt đất → 380×205 @(10,247) */
+@keyframes small-dust { 0%, 58% { opacity: 0; scale: 1; } 62% { opacity: 1; } 75% { opacity: .9; scale: 3; } 100% { opacity: 0; scale: 3; } }
+@keyframes large-dust { 0%, 60% { opacity: 0; scale: 1; translate: 0 0; } 68% { opacity: 1; } 90% { opacity: .8; scale: 3.67; translate: -5px -61px; } 100% { opacity: 0; scale: 3.67; translate: -5px -61px; } }
+@keyframes ground-dust { 0%, 61% { opacity: 0; scale: 1; translate: 0 0; } 70% { opacity: 1; } 90% { opacity: .8; scale: 1.9; translate: 0 10px; } 100% { opacity: 0; scale: 1.9; translate: 0 10px; } }
+/* 3 mảnh vụn văng tới (315,300) (42,348) (259,302); đống vụn nằm sau đá */
+@keyframes fling { 0%, 61% { opacity: 0; translate: 0 0; rotate: 0deg; } 63% { opacity: 1; } 85% { opacity: 1; translate: var(--to); rotate: 120deg; } 100% { opacity: 0; translate: var(--to); rotate: 120deg; } }
+@keyframes pile { 0%, 62% { opacity: 0; scale: .6; } 75%, 100% { opacity: 1; scale: 1; } }
+/* 10 (68–100%): lộ hình mới + lấp lánh */
+@keyframes sparkle { 0%, 68% { opacity: 0; scale: .8; } 82% { opacity: 1; scale: 1; } 100% { opacity: 0; scale: 1.05; } }
+/* đá 350×259 @(20,107) → 348×296 @(21,70) khi lộ hình */
+@keyframes carve-stone { 0%, 100% { left: 20px; top: 111px; width: 350px; height: 255px; } 5%, 66% { left: 20px; top: 107px; width: 350px; height: 259px; } 68%, 92% { left: 21px; top: 70px; width: 348px; height: 296px; } }
+@keyframes shake { 0%, 30%, 68%, 100% { translate: 0 0; } 10%, 20% { translate: -3px 2px; } 15%, 25% { translate: 3px -2px; }
+  61% { translate: -4px 3px; } 63% { translate: 4px -3px; } 65% { translate: -2px 2px; } }
 
 /* sổ lật */
 .notebook { position: relative; padding-top: 14px; }
@@ -119,31 +135,40 @@ h2 { font-size: 1.05rem; margin: 0; }
 /* menu tài khoản */
 .menu { position: absolute; top: 64px; left: 16px; z-index: 5; background: #fff; border-radius: 14px; padding: 12px 16px; box-shadow: 0 10px 30px #0002; }
 
-/* bottom sheet nhạc */
-.sheet-backdrop { position: fixed; inset: 0; background: #0006; z-index: 10; display: flex; align-items: flex-end; justify-content: center; }
-.sheet { width: 100%; max-width: 430px; background: #fff; border-radius: 24px 24px 0 0; padding: 8px 20px calc(20px + env(safe-area-inset-bottom)); max-height: 90dvh; overflow: auto; animation: up .25s ease-out; }
+/* bottom sheet nhạc — Figma 2:121: sheet 390×680 @ y164 */
+.sheet-backdrop { position: absolute; inset: 0; background: #00000059; z-index: 10; }
+.sheet { position: absolute; left: 0; bottom: 0; width: 390px; height: 680px; background: #fff; border-radius: 24px 24px 0 0; padding: 9px 20px 0; overflow: auto; animation: up .25s ease-out; }
 @keyframes up { from { translate: 0 100%; } }
-.grabber { width: 40px; height: 5px; border-radius: 3px; background: #ccc; margin: 0 auto 12px; }
-.sheet-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; }
-.sheet-head h2 { font-size: 1.3rem; }
-.sheet h3 { font-size: 1.4rem; margin: 0; }
+.grabber { width: 44px; height: 5px; border-radius: 3px; background: #ccc; margin: 0 auto; }
+.sheet-head { display: flex; justify-content: space-between; align-items: center; height: 54px; margin-top: 6px; }
+.sheet-head h2 { font-size: 1.5rem; line-height: 30px; }
+.sheet-head .ghost-btn { min-height: 54px; min-width: 84px; }
+.sheet h3 { font-size: 1.5rem; line-height: 30px; margin: 29px 0 0; }
+.sheet h3 + .muted { margin-top: 9px; line-height: 24px; }
 .ghost-btn { border: 0; background: var(--bg); color: var(--green); font-weight: 700; border-radius: 12px; min-height: 44px; padding: 0 18px; }
-.transport { display: flex; justify-content: space-between; align-items: center; margin: 18px 0; }
-.transport button { border: 0; background: none; color: var(--green); font-size: 2rem; min-width: 64px; min-height: 64px; }
-.transport .play { background: var(--green-soft); border-radius: 50%; }
-.sheet input[type=range] { width: 100%; accent-color: var(--green); }
-.times { display: flex; justify-content: space-between; font-size: .8rem; color: var(--muted); }
-.label { font-size: .75rem; color: var(--muted); margin: 18px 0 8px; }
-.track-item { display: flex; justify-content: space-between; align-items: center; width: 100%; min-height: 48px; padding: 0 16px; margin-bottom: 8px; background: #fff; border: 1px solid #d0d0d4; border-radius: 12px; font-weight: 600; text-align: left; }
+.transport { display: flex; justify-content: space-between; align-items: center; height: 64px; margin: 29px 0 0; }
+.transport button { border: 0; background: none; color: var(--green); font-size: 2rem; width: 72px; height: 64px; }
+.transport .play { background: var(--green-soft); border-radius: 28px; height: 56px; }
+.sheet input[type=range] { display: block; width: 100%; height: 44px; margin: 20px 0 0; background: none; -webkit-appearance: none; appearance: none; --p: 0%; }
+.sheet input[type=range]::-webkit-slider-runnable-track { height: 4px; border-radius: 2px; background: linear-gradient(var(--green), var(--green)) 0 0 / var(--p) 100% no-repeat, #d8d8dc; }
+.sheet input[type=range]::-moz-range-track { height: 4px; border-radius: 2px; background: linear-gradient(var(--green), var(--green)) 0 0 / var(--p) 100% no-repeat, #d8d8dc; }
+.sheet input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 20px; height: 20px; margin-top: -8px; border-radius: 50%; background: #fff; border: 0; box-shadow: 0 1px 4px #0004; }
+.sheet input[type=range]::-moz-range-thumb { width: 20px; height: 20px; border-radius: 50%; background: #fff; border: 0; box-shadow: 0 1px 4px #0004; }
+.times { display: flex; justify-content: space-between; font-size: .8rem; line-height: 18px; color: var(--muted); }
+.label { font-size: .75rem; line-height: 18px; color: var(--muted); margin: 24px 0 14px; }
+.track-item { display: flex; justify-content: space-between; align-items: center; width: 100%; height: 52px; padding: 0 16px; margin-bottom: 8px; background: #fff; border: 1px solid #d0d0d4; border-radius: 12px; font-weight: 600; text-align: left; }
 .track-item[aria-checked="true"] { background: var(--green-soft); border: 2px solid var(--green); }
 .dot { width: 12px; height: 12px; border-radius: 50%; border: 1.5px solid var(--green); }
 .track-item[aria-checked="true"] .dot { background: var(--green); }
-.sfx-row { display: flex; justify-content: space-between; align-items: center; margin-top: 18px; }
+.sfx-row { display: flex; justify-content: space-between; align-items: center; margin-top: 14px; }
+.sfx-row .ghost-btn { min-height: 54px; min-width: 92px; }
 
-/* huy chương */
-.overlay { position: fixed; inset: 0; z-index: 20; background: #1c1c1ee6; color: #fff; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 18px; padding: 24px; text-align: center; }
-.overlay .primary { max-width: 390px; }
-.badge-img { width: min(80vw, 300px); animation: pop .5s cubic-bezier(.2, 1.4, .4, 1); }
+/* huy chương — Figma 7:2 */
+.overlay { position: absolute; inset: 0; z-index: 20; background: #1c1c1ef0; color: #fff; text-align: center; }
+.overlay > * { position: absolute; margin: 0; }
+.badge-img { left: 70px; top: 226px; width: 250px; height: 289px; object-fit: contain; animation: pop .5s cubic-bezier(.2, 1.4, .4, 1); }
+.overlay p { left: 20px; top: 557px; width: 350px; line-height: 24px; }
+.overlay .primary { left: 20px; top: 711px; width: 350px; }
 @keyframes pop { from { scale: .3; opacity: 0; } }
 
 /* chỉ chơi màn dọc */
@@ -155,6 +180,7 @@ h2 { font-size: 1.05rem; margin: 0; }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: .2s !important; animation-iteration-count: 1 !important; transition-duration: .2s !important; }
   .fx { display: none; }
+  .play .carving .stone { animation: fade-in .2s ease-out; }
   /* FR-16: lật trang nhẹ thay cho xé; vẫn giữ animation để onAnimationEnd mở khoá */
   .tear.keep { display: none; }
   .tear.piece { clip-path: none; animation: swap .2s ease-out forwards !important; }
@@ -186,3 +212,34 @@ h2 { font-size: 1.05rem; margin: 0; }
 .shelf[data-on="false"] { opacity: 0; transform: translateY(32px); }
 .showcase:not([data-step="3"]) .showcase-cta { opacity: 0; transform: translateY(16px); }
 @media (prefers-reduced-motion: reduce) { .showcase * { transition: none !important; } }
+
+/* bố cục tuyệt đối theo Figma: 01 Bắt đầu (2:2), 02 Câu hỏi (2:22), 04 Kết quả (2:93) */
+.start, .play, .result { display: block; padding: 0; }
+.start > *, .play > *, .result > * { position: absolute; left: 20px; width: 350px; margin: 0; }
+.start .eyebrow { top: 30px; line-height: 18px; }
+.start h1, .result h1 { font-size: 34px; line-height: 41px; }
+.start h1 { top: 80px; }
+.start > .muted { top: 190px; font-size: 17px; line-height: 24px; }
+.start .mascot { left: 61px; top: 283px; width: 268px; height: 190px; }
+.start .rules { top: 491px; gap: 12px; line-height: 24px; }
+.start .error { top: 610px; }
+.start .bottom, .play .bottom, .result .bottom { margin: 0; padding: 0; }
+.start .bottom { top: 680px; }
+.play .top, .result .top { top: 8px; left: 14px; width: 356px; min-height: 44px; }
+.play .track { top: 58px; }
+.play .mascot { left: 0; top: 0; width: 390px; height: 394px; }
+.play .stone { left: 20px; top: 111px; width: 350px; height: 255px; inset: auto; }
+.play .caption { top: 372px; margin: 0; line-height: 18px; }
+.play .nb-stack { top: 408px; height: 326px; }
+.play .paper { min-height: 312px; }
+.play .bottom { top: 748px; gap: 8px; }
+.play .footnote { line-height: 18px; }
+.result .top { left: 20px; width: 350px; }
+.result h1 { top: 98px; }
+.result > .muted { top: 155px; line-height: 24px; }
+.result .mascot { left: 112px; top: 199px; width: 166px; height: 158px; }
+.result .title-name { top: 374px; line-height: 30px; }
+.result .score { top: 416px; line-height: 24px; }
+.result .panel { top: 476px; min-height: 164px; }
+.result .bottom { top: auto; bottom: 46px; gap: 18px; }
+.result .footnote { line-height: 18px; }

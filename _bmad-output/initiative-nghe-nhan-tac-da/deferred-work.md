@@ -25,3 +25,6 @@
 - source_plan: `_bmad-output/initiative-nghe-nhan-tac-da/epic-player-game/story-start-screen-avatar-menu-and-player-messages-plan.md`
   summary: Show OAuth redirect errors (?error=&error_description=) on the start screen.
   evidence: Only signInWithOAuth call errors reach StartScreen; redirect query errors were never read, pre-dating story 2.8.
+- source_plan: `_bmad-output/initiative-nghe-nhan-tac-da/plan-figma-fidelity-pass.md`
+  summary: Result screen two-button case (medal replay + Chơi lại) overlaps the bottom of the reward panel; Figma has no frame for it.
+  evidence: `.result .bottom` anchored bottom:46px starts ~y618 while panel spans y476–640 when both buttons render.
