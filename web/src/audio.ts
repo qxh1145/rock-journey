@@ -75,7 +75,9 @@ export function useMusic(tracks: Track[], defaultQueue: string[] | null) {
   const [duration, setDuration] = useState(0)
   const [error, setError] = useState(false)
   const ref = useRef<HTMLAudioElement | null>(null)
-  const queue = finale ? [FINALE_SONG] : prefs.track ? [prefs.track] : defaultQueue ?? (tracks[0] ? [tracks[0].asset_url] : [])
+  // bài đã chọn bị gỡ khỏi danh sách phát → quay về hàng đợi mặc định
+  const picked = prefs.track && (!tracks.length || tracks.some((t) => t.asset_url === prefs.track)) ? prefs.track : null
+  const queue = finale ? [FINALE_SONG] : picked ? [picked] : defaultQueue ?? (tracks[0] ? [tracks[0].asset_url] : [])
   const track = queue.length ? queue[idx % queue.length] : null
 
   if (!ref.current && typeof Audio !== 'undefined') {

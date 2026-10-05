@@ -39,8 +39,4 @@ insert into public.questions (set_version, id, idx, prompt, options, correct_opt
  '[{"id":"a","text":"Cắt phá thô và mài"},{"id":"b","text":"Thay hoàn toàn nghệ nhân"},{"id":"c","text":"Đặt tên tác phẩm"},{"id":"d","text":"Không dùng máy"}]','a',
  'Máy giúp cắt, phá thô nhanh; chi tiết thần thái vẫn cần tay nghề nghệ nhân.');
 
--- File nhạc đặt tại web/public/audio/music/
-insert into public.music_playlist (title, asset_url, duration_seconds, display_order) values
-('Thanh âm làng nghề', '/audio/music/thanh-am-lang-nghe.mp3', null, 1),
-('Nhịp đục đá',        '/audio/music/nhip-duc-da.mp3',        null, 2),
-('Bình yên bên đá',    '/audio/music/binh-yen-ben-da.mp3',    null, 3);
+-- Danh sách phát: xem migration 20261006010000_real_playlist.sql
