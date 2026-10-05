@@ -39,7 +39,7 @@ Oneshot: one ~50-line workflow file plus a README line; the rest is secrets the 
 ### Progress (2026-10-05)
 - Added `.github/workflows/deploy.yml` (smoke + migrate jobs) and a CI/CD section in `web/README.md`.
 - Local smoke run not possible: local Postgres cluster already has `anon` role, `stub_auth.sql` assumes a fresh cluster (CI container is fresh). YAML parses.
-- Pending (user): set the 3 repo secrets, then push to see staging run.
+- 3 repo secrets set (user). First run 37337895609 never started: GitHub account locked for billing. User chose to leave it (2026-10-05); workflow unverified on GitHub.
 
 ## Verification
 
