@@ -14,7 +14,7 @@ async function play(page: Page, run: () => Promise<void>) {
   }
 }
 
-test('double-tap records one answer; feedback uses ×/✓ text; input locked during tear', async ({ page }) => {
+test('double-tap records one answer; feedback uses ×/✓ text; input locked during card transition', async ({ page }) => {
   let rpcs = 0
   page.on('request', (r) => { if (r.url().includes('/rpc/submit_answer')) rpcs++ })
   await play(page, async () => {
@@ -35,7 +35,7 @@ test('double-tap records one answer; feedback uses ×/✓ text; input locked dur
   })
 })
 
-test('reduced motion swaps the tear for a fade and unlocks input', async ({ page }) => {
+test('reduced motion keeps a short card fade and unlocks input', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' })
   await play(page, async () => {
     await page.getByRole('radio').first().click()
@@ -43,7 +43,7 @@ test('reduced motion swaps the tear for a fade and unlocks input', async ({ page
     // dừng animation để kiểm tra kiểu đang áp dụng, rồi cho chạy tiếp
     const pause = await page.addStyleTag({ content: '.tear { animation-play-state: paused !important; }' })
     await page.getByRole('button', { name: 'Tiếp tục câu 2' }).click()
-    await expect(page.locator('.tear.keep')).toHaveCSS('display', 'none')
+    await expect(page.locator('.tear.keep')).toHaveCount(0)
     expect(await page.locator('.tear.piece').evaluate((e) => getComputedStyle(e).animationName)).toBe('swap')
     await pause.evaluate((e) => e.remove())
     await expect(page.locator('.tear.piece')).toHaveCount(0)
