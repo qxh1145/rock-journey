@@ -229,8 +229,9 @@ h2 { font-size: 1.05rem; margin: 0; }
 .gate { position: absolute; inset: 0; display: block; padding: 0; background: var(--gate-bg); }
 .gate > * { position: absolute; margin: 0; }
 .gate-atmosphere { left: 0; top: 0; width: 390px; height: 844px; max-width: none; }
-.gate-stall { left: -55px; top: -132px; width: 500px; height: 889px; overflow: hidden; }
-.gate-stall img { width: 100%; height: 100%; max-width: none; object-fit: contain; }
+/* Ảnh có lề trang trí: quầy bên trong vừa trọn khung 390px, mặt bàn ở y438. */
+.gate-stall { left: -35px; top: 105px; width: 440px; height: 458px; overflow: hidden; }
+.gate-stall img { position: absolute; top: -175px; width: 100%; height: 782.22px; max-width: none; object-fit: contain; }
 .gate-sparkles { left: 0; top: 0; width: 390px; height: 590px; overflow: hidden; }
 .gate-sparkles img { position: absolute; }
 .gate-greet { left: 20px; top: 606px; width: 350px; height: 45px; overflow: hidden; display: flex; flex-direction: column; gap: 5px; text-align: center; font-size: 17px; }
