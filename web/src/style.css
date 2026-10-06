@@ -38,7 +38,7 @@ h2 { font-size: 1.05rem; margin: 0; }
 .top-title { flex: 1; font-size: 15px; line-height: 24px; font-weight: 600; }
 .avatar { width: 44px; height: 44px; border-radius: 50%; border: 0; background: none; padding: 0; display: grid; place-items: center; font-size: 1.4rem; }
 .avatar img { width: 32px; height: 32px; border-radius: 50%; }
-.avatar .avatar-default { width: 44px; height: 44px; border-radius: 0; }
+.avatar .avatar-default { width: 44px; height: 44px; border-radius: 50%; object-fit: cover; }
 .ghost { display: flex; align-items: center; gap: 8px; border: 0; background: #fff; border-radius: 22px; min-height: 44px; padding: 0 10px; color: var(--green); font-size: 14px; font-weight: 600; }
 .ghost span { font-size: 22px; }
 .ghost .name { display: block; max-width: 88px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
