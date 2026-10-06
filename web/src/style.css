@@ -173,12 +173,13 @@ h2 { font-size: 1.05rem; margin: 0; }
 .sfx-row .ghost-btn { min-height: 54px; min-width: 92px; }
 
 /* huy chương — Figma 7:2 */
-.overlay { position: absolute; inset: 0; z-index: 20; background: #1c1c1ef0; color: #fff; text-align: center; }
+.overlay { position: absolute; inset: 0; z-index: 20; background: rgb(28 28 30 / 94%); color: #fff; text-align: center; }
 .overlay > * { position: absolute; margin: 0; }
 .badge-img { left: 70px; top: 226px; width: 250px; height: 289px; object-fit: contain; animation: pop .5s cubic-bezier(.2, 1.4, .4, 1); }
-.overlay p { left: 20px; top: 557px; width: 350px; line-height: 24px; }
+.overlay p { left: 20px; top: 557px; width: 350px; font-size: 17px; line-height: 24px; }
 .overlay .primary { left: 20px; top: 711px; width: 350px; }
 @keyframes pop { from { scale: .3; opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { .overlay .badge-img { animation: none !important; } }
 
 /* chỉ chơi màn dọc */
 .rotate-hint { display: none; }

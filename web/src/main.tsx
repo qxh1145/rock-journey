@@ -121,10 +121,17 @@ function App() {
     if (screen !== 'result' || game?.title !== 'MAM_NGHE') return
     const seen = readStore<string[]>(BADGE_KEY, [])
     if (seen.includes(game.session_id)) return
-    writeStore(BADGE_KEY, [...seen, game.session_id])
     setBadgeOpen(true)
     sfx.play('badge')
   }, [screen, game?.title, game?.session_id])
+
+  function closeMedal() {
+    if (game?.title === 'MAM_NGHE') {
+      const seen = readStore<string[]>(BADGE_KEY, [])
+      if (!seen.includes(game.session_id)) writeStore(BADGE_KEY, [...seen, game.session_id])
+    }
+    setBadgeOpen(false)
+  }
 
   async function signIn() {
     if (!supabase) return
@@ -263,7 +270,7 @@ function App() {
 
       {musicOpen && <MusicSheet music={music} tracks={tracks} onClose={() => setMusicOpen(false)} />}
 
-      {badgeOpen && <MedalOverlay onClose={() => setBadgeOpen(false)} />}
+      {screen === 'result' && game?.title === 'MAM_NGHE' && badgeOpen && <MedalOverlay onClose={closeMedal} />}
     </div></>
   )
 }
