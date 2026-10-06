@@ -301,21 +301,14 @@ h2 { font-size: 1.05rem; margin: 0; }
 .admin th, .admin td { text-align: left; padding: 6px 4px; border-bottom: 1px solid #e0e0e4; overflow-wrap: anywhere; }
 .admin-pager { display: flex; justify-content: space-between; align-items: center; }
 
-/* Temporary flat question UI: natural mobile sizing, no paper or text shrinking. */
-.phone:has(> .screen.play) { top: 0; left: max(0px, calc((100% - 480px) / 2)); width: min(100%, 480px); height: 100dvh; margin: 0; transform: none; overflow-x: hidden; overflow-y: auto; }
-.screen.play { display: flex; height: auto; min-height: 100%; padding: 12px 16px max(16px, env(safe-area-inset-bottom)); gap: 12px; }
-.play > * { position: relative; left: auto; top: auto; width: 100%; margin: 0; flex-shrink: 0; }
-.play .top { top: auto; left: auto; width: 100%; }
-.play .track { top: auto; height: 4px; }
-.play .play-hero { height: 197px; }
-.play .mascot { top: 0; left: calc(50% - 195px); width: 390px; height: 394px; transform: scale(.5); transform-origin: 50% 0; }
-.play .caption { top: auto; margin-top: -8px; }
-.play .question-stack { position: relative; }
-.question-card { width: 100%; padding: 20px; background: var(--card); border: 1px solid #e1e5e2; border-radius: 16px; }
-.play .q { min-height: 0; font: 600 18px/1.5 'Be Vietnam Pro', system-ui, sans-serif; color: var(--fg); margin: 0; overflow-wrap: anywhere; }
-.question-hint { margin: 8px 0 18px; color: var(--muted); font-size: 13px; line-height: 1.5; }
-.answer-list { display: grid; gap: 10px; }
-.answer-option { display: flex; align-items: center; gap: 12px; width: 100%; min-height: 56px; padding: 12px; text-align: left; background: #fff; border: 1px solid #cbd3ce; border-radius: 10px; font-size: 15px; line-height: 1.5; }
+/* Flat cards retain the original notebook's exact 350×326 frame at (20, 408). */
+.play .play-hero { left: 0; top: 0; width: 390px; height: 394px; }
+.play .question-stack { top: 408px; height: 326px; }
+.question-card { width: 100%; height: 326px; overflow-y: auto; overscroll-behavior: contain; padding: 16px; background: var(--card); border: 1px solid #e1e5e2; border-radius: 16px; }
+.play .q { min-height: 0; font: 600 16px/1.5 'Be Vietnam Pro', system-ui, sans-serif; color: var(--fg); margin: 0; overflow-wrap: anywhere; }
+.question-hint { margin: 8px 0 12px; color: var(--muted); font-size: 12px; line-height: 1.5; }
+.answer-list { display: grid; gap: 8px; }
+.answer-option { display: flex; align-items: center; gap: 12px; width: 100%; min-height: 44px; padding: 8px 10px; text-align: left; background: #fff; border: 1px solid #cbd3ce; border-radius: 10px; font-size: 14px; line-height: 1.5; }
 .answer-option[aria-checked="true"] { background: var(--green-soft); border-color: var(--green); color: var(--green); box-shadow: inset 0 0 0 1px var(--green); }
 .answer-letter { display: grid; place-items: center; flex: 0 0 28px; height: 28px; border-radius: 6px; background: #f0f3f1; font-size: 13px; font-weight: 600; }
 .answer-option[aria-checked="true"] .answer-letter { background: var(--green); color: #fff; }
@@ -328,8 +321,4 @@ h2 { font-size: 1.05rem; margin: 0; }
 .play .nb-right { background: var(--green-soft); color: var(--green); }
 .play .nb-explain { padding: 0; color: var(--muted); }
 .play .tear.piece { clip-path: none; transform-origin: center; animation: swap .2s ease-out forwards; background: var(--bg); }
-.play .bottom { position: sticky; top: auto; bottom: 0; margin-top: auto; padding: 12px 0 0; background: var(--bg); gap: 8px; }
 .play .primary { border-radius: 10px; }
-.phone:has(> .screen.play) .sheet { left: max(0px, calc((100% - 480px) / 2)); width: min(100%, 480px); height: min(680px, 100dvh); position: fixed; }
-.phone:has(> .screen.play) .sheet-backdrop { position: fixed; }
-@media (max-height: 740px) { .play .play-hero { height: 158px; } .play .mascot { transform: scale(.4); } }
