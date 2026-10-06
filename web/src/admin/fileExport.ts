@@ -35,3 +35,10 @@ export async function downloadXlsx(name: string, rows: string[][]) {
   const { default: writeXlsxFile } = await import('write-excel-file/browser')
   await writeXlsxFile(rows.map((r) => r.map((v) => (v === '' ? null : v)))).toFile(name)
 }
+
+// sheet đầu tiên, mọi ô thành chuỗi ('' khi trống); nạp thư viện khi cần
+export async function readXlsx(file: File): Promise<string[][]> {
+  const { readSheet } = await import('read-excel-file/browser')
+  const rows = await readSheet(file)
+  return rows.map((r) => r.map((v) => (v == null ? '' : String(v).trim())))
+}

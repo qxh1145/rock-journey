@@ -6,14 +6,18 @@ import { LookupSection } from './LookupSection'
 import { ExportSection } from './ExportSection'
 import { DashboardSection } from './DashboardSection'
 import { UsersSection } from './UsersSection'
+import { QuestionsSection } from './QuestionsSection'
+import { LiveSection } from './LiveSection'
 
 type Ctx = { onForbidden: () => void }
 // slot đăng ký: epic sau chỉ cần thêm phần tử vào đây
 export const adminSections: { id: string; label: string; render: (ctx: Ctx) => ReactNode }[] = [
   { id: 'dashboard', label: 'Tổng quan', render: (ctx) => <DashboardSection {...ctx} /> },
+  { id: 'live', label: 'Trực tiếp', render: (ctx) => <LiveSection {...ctx} /> },
   { id: 'users', label: 'Người dùng', render: (ctx) => <UsersSection {...ctx} /> },
   { id: 'lookup', label: 'Tra cứu', render: (ctx) => <LookupSection {...ctx} /> },
   { id: 'export', label: 'Xuất danh sách', render: (ctx) => <ExportSection {...ctx} /> },
+  { id: 'questions', label: 'Bộ câu hỏi', render: (ctx) => <QuestionsSection {...ctx} /> },
 ]
 
 export function AdminApp() {
