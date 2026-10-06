@@ -273,3 +273,6 @@ h2 { font-size: 1.05rem; margin: 0; }
 .admin-kpis { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 8px; }
 .admin-kpis li { background: var(--card); border-radius: 14px; padding: 12px 14px; display: grid; gap: 4px; }
 .admin-kpis strong { font-size: 1.4rem; }
+.admin table { width: 100%; border-collapse: collapse; font-size: .85rem; }
+.admin th, .admin td { text-align: left; padding: 6px 4px; border-bottom: 1px solid #e0e0e4; overflow-wrap: anywhere; }
+.admin-pager { display: flex; justify-content: space-between; align-items: center; }

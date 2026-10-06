@@ -94,3 +94,46 @@ begin
   assert admin_get_dashboard(p_score_min => 8, p_score_max => 3)->>'code' = 'INVALID_INPUT';
   raise notice 'DASHBOARD PASS';
 end $$;
+
+do $$
+declare
+  p1 uuid := '00000000-0000-0000-0000-000000000001'; p3 uuid := '00000000-0000-0000-0000-000000000003';
+  d jsonb;
+begin
+  perform set_config('test.uid',p3::text,false);
+  assert admin_search_users()->>'code' = 'FORBIDDEN';
+  assert admin_get_user_detail(p1)->>'code' = 'FORBIDDEN';
+
+  perform set_config('test.uid','00000000-0000-0000-0000-000000000002',false);
+  d := admin_search_users()->'data';
+  assert (d->>'total') = '4' and d->>'page_size' = '20' and (select string_agg(r->>'email',',') from jsonb_array_elements(d->'rows') r) = 'p1@mail.com,p3@x.com,p4@x.com,p5@x.com', d::text;
+  assert (d->'rows'->0->>'prize') = 'CLAIMED' and (d->'rows'->3->>'status') = 'IN_PROGRESS';
+  d := admin_search_users('p3')->'data';
+  assert d->>'total' = '1' and d->'rows'->0->>'email' = 'p3@x.com', d::text;
+  assert admin_search_users('p_')->'data'->>'total' = '0';  -- "_" được escape
+  d := admin_search_users(p_status => 'IN_PROGRESS')->'data';
+  assert d->>'total' = '1' and d->'rows'->0->>'email' = 'p5@x.com', d::text;
+  d := admin_search_users(p_prize => 'UNCLAIMED')->'data';
+  assert d->>'total' = '1' and d->'rows'->0->>'email' = 'p3@x.com', d::text;
+  d := admin_search_users(p_prize => 'NOT_ELIGIBLE')->'data';
+  assert d->>'total' = '2', d::text;
+  d := admin_search_users(p_page => 2)->'data';
+  assert d->>'total' = '4' and jsonb_array_length(d->'rows') = 0, d::text;
+  assert admin_search_users(p_status => 'DONE')->>'code' = 'INVALID_INPUT';
+  assert admin_search_users(p_page => 0)->>'code' = 'INVALID_INPUT';
+  assert admin_search_users(p_score_min => 8, p_score_max => 3)->>'code' = 'INVALID_INPUT';
+
+  d := admin_get_user_detail(p1)->'data';
+  assert d->'profile'->>'email' = 'p1@mail.com' and d->'session'->>'status' = 'COMPLETED' and d->'session'->>'resume_count' = '0', d::text;
+  assert jsonb_array_length(d->'answers') = 12 and d->'answers'->2->>'is_correct' = 'false' and d->'answers'->2->>'selected_text' = 'B', d::text;
+  d := admin_get_user_detail(p3)->'data';
+  assert d->'session'->>'status' = 'COMPLETED' and jsonb_array_length(d->'answers') = 0, d::text;
+  insert into auth.users values ('00000000-0000-0000-0000-000000000009','p9@x.com',now(),'{}');
+  insert into players (id, email_normalized, email_at_play) values ('00000000-0000-0000-0000-000000000009','p9@x.com','p9@x.com');
+  d := admin_get_user_detail('00000000-0000-0000-0000-000000000009')->'data';
+  assert d->'session' = 'null'::jsonb and jsonb_array_length(d->'answers') = 0, d::text;
+  assert admin_search_users()->'data'->>'total' = '5' and admin_search_users(p_q => 'p9')->'data'->'rows'->0->>'status' = 'NONE';
+  assert admin_search_users(p_score_min => 0)->'data'->>'total' = '4';  -- lọc phiên loại người chưa chơi
+  assert admin_get_user_detail(gen_random_uuid())->>'code' = 'NOT_FOUND';
+  raise notice 'USERS PASS';
+end $$;
