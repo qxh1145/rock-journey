@@ -5,11 +5,13 @@ import { callRpc } from '../game'
 import { LookupSection } from './LookupSection'
 import { ExportSection } from './ExportSection'
 import { DashboardSection } from './DashboardSection'
+import { UsersSection } from './UsersSection'
 
 type Ctx = { onForbidden: () => void }
 // slot đăng ký: epic sau chỉ cần thêm phần tử vào đây
 export const adminSections: { id: string; label: string; render: (ctx: Ctx) => ReactNode }[] = [
   { id: 'dashboard', label: 'Tổng quan', render: (ctx) => <DashboardSection {...ctx} /> },
+  { id: 'users', label: 'Người dùng', render: (ctx) => <UsersSection {...ctx} /> },
   { id: 'lookup', label: 'Tra cứu', render: (ctx) => <LookupSection {...ctx} /> },
   { id: 'export', label: 'Xuất danh sách', render: (ctx) => <ExportSection {...ctx} /> },
 ]
