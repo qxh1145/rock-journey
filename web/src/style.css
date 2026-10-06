@@ -20,7 +20,6 @@ img { max-width: 100%; }
 .error { color: var(--bad); }
 h1 { font-size: 2rem; line-height: 1.2; margin: 6px 0 0; font-weight: 700; letter-spacing: -.01em; }
 h2 { font-size: 1.05rem; margin: 0; }
-.eyebrow { color: var(--green); font-size: .8rem; margin: 18px 0; }
 
 .bottom { margin-top: auto; display: flex; flex-direction: column; gap: 8px; padding-top: 10px; }
 .primary { width: 100%; min-height: 54px; border: 0; border-radius: 14px; background: var(--green); color: #fff; font-weight: 600; font-size: 17px; line-height: 22px; }
@@ -30,7 +29,6 @@ h2 { font-size: 1.05rem; margin: 0; }
 .footnote.left { text-align: left; }
 .link { background: none; border: 0; color: var(--muted); text-decoration: underline; min-height: 44px; }
 
-.rules { list-style: none; padding: 0; margin: 4px 0; display: grid; gap: 10px; }
 
 /* header + tiến trình */
 .top { display: flex; align-items: center; gap: 4px; min-height: 48px; }
@@ -222,18 +220,31 @@ h2 { font-size: 1.05rem; margin: 0; }
 .showcase:not([data-step="3"]) .showcase-cta { opacity: 0; transform: translateY(16px); }
 @media (prefers-reduced-motion: reduce) { .showcase * { transition: none !important; } }
 
-/* bố cục tuyệt đối theo Figma: 01 Bắt đầu (2:2), 02 Câu hỏi (2:22), 04 Kết quả (2:93) */
-.start, .play, .result { display: block; padding: 0; }
-.start > *, .play > *, .result > * { position: absolute; left: 20px; width: 350px; margin: 0; }
-.start .eyebrow { top: 30px; line-height: 18px; }
-.start h1, .result h1 { font-size: 34px; line-height: 41px; }
-.start h1 { top: 80px; }
-.start > .muted { top: 190px; font-size: 17px; line-height: 24px; }
-.start .mascot { left: 61px; top: 283px; width: 268px; height: 190px; }
-.start .rules { top: 491px; gap: 12px; line-height: 24px; }
-.start .error { top: 610px; }
-.start .bottom, .play .bottom, .result .bottom { margin: 0; padding: 0; }
-.start .bottom { top: 680px; }
+/* 00 Cổng vào làng nghề (142:1053) */
+.gate { position: absolute; inset: 0; display: block; padding: 0; background: #fcf8ef; }
+.gate > * { position: absolute; margin: 0; }
+.gate-atmosphere { left: 0; top: 0; width: 390px; height: 844px; max-width: none; }
+.gate-stall { left: -55px; top: -132px; width: 500px; height: 889px; overflow: hidden; }
+.gate-stall img { width: 100%; height: 100%; max-width: none; object-fit: contain; }
+.gate-sparkles { left: 0; top: 0; width: 390px; height: 590px; overflow: hidden; }
+.gate-sparkles img { position: absolute; }
+.gate-greet { left: 20px; top: 606px; width: 350px; height: 45px; overflow: hidden; display: flex; flex-direction: column; gap: 5px; text-align: center; font-size: 17px; }
+.gate-greet p { height: 20px; line-height: 25px; margin: 0; color: var(--muted); }
+.gate-greet p:first-child { font-weight: 600; color: var(--fg); }
+.gate .mascot { left: 44px; top: 333px; width: 148px; height: 105px; }
+.gate .error { left: 20px; top: 664px; width: 350px; text-align: center; }
+.gate .bottom { left: 20px; top: 735px; width: 350px; margin: 0; padding: 0; }
+/* flow mở màn 142:1053 → 148:1081: smart animate 700ms ease-in-out — nền #fcf8ef → --bg, mọi lớp của cổng mờ dần;
+   PlayScreen (vẽ đè lên) lo phần đá bay vào + quiz hiện ra */
+.gate.leaving { animation: gate-bg .7s cubic-bezier(.42, 0, .58, 1) both; }
+.gate.leaving > * { animation: swap .7s cubic-bezier(.42, 0, .58, 1) both; }
+@keyframes gate-bg { to { background-color: var(--bg); } }
+
+/* bố cục tuyệt đối theo Figma: 02 Câu hỏi (2:22), 04 Kết quả (2:93) */
+.play, .result { display: block; padding: 0; }
+.play > *, .result > * { position: absolute; left: 20px; width: 350px; margin: 0; }
+.result h1 { font-size: 34px; line-height: 41px; }
+.play .bottom, .result .bottom { margin: 0; padding: 0; }
 .play .top, .result .top { top: 8px; left: 14px; width: 356px; min-height: 44px; z-index: 1; }
 /* khung mascot (390×394 từ y0) đè lên thanh trên → nâng thanh lên để bấm được nút nhạc/avatar */
 .play .top .ghost { position: absolute; right: 0; top: 0; }
