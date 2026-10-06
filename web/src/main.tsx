@@ -122,7 +122,6 @@ function App() {
     const seen = readStore<string[]>(BADGE_KEY, [])
     if (seen.includes(game.session_id)) return
     setBadgeOpen(true)
-    sfx.play('badge')
   }, [screen, game?.title, game?.session_id])
 
   function closeMedal() {
@@ -131,6 +130,11 @@ function App() {
       if (!seen.includes(game.session_id)) writeStore(BADGE_KEY, [...seen, game.session_id])
     }
     setBadgeOpen(false)
+  }
+
+  function showResultFromShowcase() {
+    setBadgeOpen(game?.title === 'MAM_NGHE')
+    setScreen('result')
   }
 
   async function signIn() {
@@ -252,10 +256,10 @@ function App() {
         onSelect={setSelected} onSubmit={() => void submitAnswer()} onNext={next}
         onCarved={() => setCarving(null)} onTearEnd={() => setTorn(null)} />}
 
-      {screen === 'showcase' && <ShowcaseScreen onDone={() => setScreen('result')} />}
+      {screen === 'showcase' && <ShowcaseScreen onDone={showResultFromShowcase} />}
 
       {screen === 'result' && game && <ResultScreen game={game} topBar={topBar}
-        onShowMedal={() => { setBadgeOpen(true); sfx.play('badge') }}
+        onShowMedal={() => setBadgeOpen(true)}
         onReplay={canReplay ? () => void replay() : undefined} />}
 
       {screen === 'error' && <main className="screen">

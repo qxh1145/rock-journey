@@ -1,10 +1,12 @@
 import { useEffect, useRef } from 'react'
+import { sfx } from '../audio'
 
 export function MedalOverlay({ onClose }: { onClose: () => void }) {
   const continueButton = useRef<HTMLButtonElement>(null)
   useEffect(() => {
     const previousFocus = document.activeElement instanceof HTMLElement ? document.activeElement : null
     continueButton.current?.focus()
+    sfx.play('badge')
     return () => previousFocus?.focus()
   }, [])
 
