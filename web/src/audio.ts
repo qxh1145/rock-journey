@@ -24,6 +24,7 @@ const SFX_URL: Partial<Record<Sfx, string>> = {
 // nhạc nền mặc định: hai bài nối nhau, lặp lại
 export const DEFAULT_QUEUE = [M("Evil's Soft First Touches.mp3"), M('Fate\u00a0Calls.mp3')]
 export const FINALE_SONG = M('VSTRA - So Bad.mp3')
+export const VIET_ANH_LOGIN_SONG = M('Billie Eilish - L’AMOUR DE MA VIE (Official Lyric Video).mp3')
 
 const cache = new Map<Sfx, HTMLAudioElement | null>()
 let duck: (() => void) | null = null
@@ -56,7 +57,7 @@ export const trackTitle = (track: string | null, tracks: Track[]) =>
 
 const MUSIC_VOL = 0.3
 
-export function useMusic(tracks: Track[], defaultQueue: string[] | null) {
+export function useMusic(tracks: Track[], defaultQueue: string[] | null, loginTrack: string | null = null) {
   const [prefs, setPrefs] = useState(loadPrefs)
   const [finale, setFinale] = useState(false)
   const [idx, setIdx] = useState(0)
@@ -65,7 +66,7 @@ export function useMusic(tracks: Track[], defaultQueue: string[] | null) {
   const [error, setError] = useState(false)
   const ref = useRef<HTMLAudioElement | null>(null)
   // bài đã chọn bị gỡ khỏi danh sách phát → quay về hàng đợi mặc định
-  const picked = prefs.track && (!tracks.length || tracks.some((t) => t.asset_url === prefs.track)) ? prefs.track : null
+  const picked = prefs.track && (prefs.track === loginTrack || !tracks.length || tracks.some((t) => t.asset_url === prefs.track)) ? prefs.track : null
   const queue = finale ? [FINALE_SONG] : picked ? [picked] : defaultQueue ?? (tracks[0] ? [tracks[0].asset_url] : [])
   const track = queue.length ? queue[idx % queue.length] : null
 
@@ -75,6 +76,14 @@ export function useMusic(tracks: Track[], defaultQueue: string[] | null) {
     a.volume = MUSIC_VOL
     ref.current = a
   }
+
+  // Mỗi lần vào tài khoản có bài riêng: chọn lại bài và bật nhạc, ghi đè prefs cũ.
+  useEffect(() => {
+    if (!loginTrack) return
+    setFinale(false)
+    setIdx(0)
+    setPrefs((p) => ({ ...p, music: true, track: loginTrack }))
+  }, [loginTrack])
 
   useEffect(() => {
     const a = ref.current!

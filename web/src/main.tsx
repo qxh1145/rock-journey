@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react'
 import ReactDOM from 'react-dom/client'
 import type { Session } from '@supabase/supabase-js'
 import { supabase } from './lib/supabase'
-import { DEFAULT_QUEUE, sfx, trackTitle, useMusic, type Track } from './audio'
+import { DEFAULT_QUEUE, VIET_ANH_LOGIN_SONG, sfx, trackTitle, useMusic, type Track } from './audio'
 import {
   BADGE_KEY, CHISEL_KEY, callRpc, rpcAction, message, readStore, removeStore, writeStore,
   type GameState, type PendingAnswer, type Question, type Screen, type Stage,
@@ -44,8 +44,8 @@ function App() {
   const [carving, setCarving] = useState<{ from: Stage; key: string } | null>(null)
   // trang sổ cũ đang bị xé (Figma: xé trên xuống ~0,8s)
   const [torn, setTorn] = useState<{ key: string; node: ReactNode } | null>(null)
-  // tài khoản này giữ playlist cũ thay vì nhạc nền mặc định
-  const music = useMusic(tracks, user?.email?.toLowerCase() === 'honguyenvietanh1405@gmail.com' ? null : DEFAULT_QUEUE)
+  const loginSong = user?.email?.toLowerCase() === 'honguyenvietanh1405@gmail.com' ? VIET_ANH_LOGIN_SONG : null
+  const music = useMusic(tracks, DEFAULT_QUEUE, loginSong)
   // undefined = chưa nhận INITIAL_SESSION; null = khách → lần đầu luôn route
   const activeUserId = useRef<string | null | undefined>(undefined)
 
