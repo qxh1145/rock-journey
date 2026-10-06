@@ -22,6 +22,7 @@ const SFX_URL: Partial<Record<Sfx, string>> = {
   correct: M('Duolingo Correct Sound Effect.mp3'),
   wrong: M('Duolingo Incorrect Answer sound effect.mp3'),
   finish: M('The Witcher 3： Wild Hunt ｜ Quest Completed ♪ [Sound Effect].mp3'),
+  badge: M('The Witcher 3： Wild Hunt ｜ Quest Completed ♪ [Sound Effect].mp3'),
 }
 // nhạc nền mặc định: hai bài nối nhau, lặp lại
 export const DEFAULT_QUEUE = [M("Evil's Soft First Touches.mp3"), M('Fate\u00a0Calls.mp3')]
