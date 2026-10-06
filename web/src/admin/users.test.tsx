@@ -4,6 +4,8 @@ import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/re
 
 const rpc = vi.hoisted(() => vi.fn())
 vi.mock('../game', () => ({ callRpc: rpc, message: (_e: unknown, f: string) => f }))
+const xlsx = vi.hoisted(() => vi.fn())
+vi.mock('./fileExport', () => ({ downloadXlsx: xlsx }))
 
 import { UsersSection } from './UsersSection'
 import { emptyFilter, toRpcParams } from './filters'
@@ -50,4 +52,20 @@ it('FORBIDDEN calls onForbidden', async () => {
   const onForbidden = vi.fn()
   render(<UsersSection onForbidden={onForbidden} />)
   await waitFor(() => expect(onForbidden).toHaveBeenCalled())
+})
+
+it('Xuất Excel fetches every page with the current search and writes one xlsx', async () => {
+  const pg = (p: number, n: number) => ({ ok: true, code: 'OK', data: { total: 41, page: p, page_size: 20,
+    rows: Array.from({ length: n }, (_, i) => ({ ...row, player_id: `u${p}-${i}`, email: `p${p}-${i}@mail.com` })) } })
+  rpc.mockImplementation((_n: string, a: { p_page: number }) => Promise.resolve(pg(a.p_page, a.p_page < 3 ? 20 : 1)))
+  render(<UsersSection onForbidden={() => {}} />)
+  fireEvent.change(screen.getByLabelText('Email người chơi'), { target: { value: ' Nguyễn ' } })
+  fireEvent.click(await screen.findByText('Xuất Excel'))
+  await waitFor(() => expect(xlsx).toHaveBeenCalled())
+  const exportCalls = rpc.mock.calls.filter((c) => c[1].p_q === 'Nguyễn').map((c) => c[1].p_page)
+  expect(exportCalls.slice(-3)).toEqual([1, 2, 3])
+  const [name, rows] = xlsx.mock.calls[0]
+  expect(name).toMatch(/^users-\d{8}\.xlsx$/)
+  expect(rows).toHaveLength(42)
+  expect(rows[1].slice(0, 6)).toEqual(['p1-0@mail.com', '', 'Hoàn thành', '10', '12', 'Đã nhận'])
 })

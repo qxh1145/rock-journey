@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { callRpc, message } from '../game'
 import { emptyFilter, toRpcParams, type AdminFilter } from './filters'
 import { FilterBar } from './FilterBar'
+import { downloadXlsx } from './fileExport'
 
 type Row = {
   player_id: string; email: string; display_name: string | null; locked: boolean; status: string
@@ -29,6 +30,7 @@ export function UsersSection({ onForbidden }: { onForbidden: () => void }) {
   const [data, setData] = useState<Page | null>(null)
   const [detail, setDetail] = useState<Detail | null>(null)
   const [error, setError] = useState('')
+  const [exporting, setExporting] = useState(false)
   const forbidden = useRef(onForbidden) // AdminApp truyền hàm mới mỗi lần render; không để nó kích hoạt gọi lại
   forbidden.current = onForbidden
 
@@ -45,6 +47,31 @@ export function UsersSection({ onForbidden }: { onForbidden: () => void }) {
       .catch((err) => { if (live) { setData(null); setError(message(err, 'Không tải được danh sách.')) } })
     return () => { live = false }
   }, [filter, q, page])
+
+  // ponytail: tải lần lượt từng trang 20 dòng của admin_search_users; đủ cho quy mô sự kiện, cần RPC xuất riêng nếu lên hàng chục nghìn người
+  async function exportXlsx() {
+    setExporting(true)
+    setError('')
+    try {
+      const rows: Row[] = []
+      for (let p = 1; ; p++) {
+        const r = await callRpc<Page>('admin_search_users', { ...toRpcParams(filter), p_q: q.trim() || null, p_page: p })
+        if (r.code === 'FORBIDDEN') return forbidden.current()
+        if (!r.ok || !r.data) return setError(r.message ?? 'Không xuất được danh sách.')
+        rows.push(...r.data.rows)
+        if (rows.length >= r.data.total || r.data.rows.length === 0) break
+      }
+      await downloadXlsx(`users-${new Date().toLocaleDateString('sv-SE').replace(/-/g, '')}.xlsx`, [
+        ['Email', 'Tên', 'Trạng thái', 'Số câu đúng', 'Số câu đã trả lời', 'Quà', 'Đã khóa', 'Bắt đầu', 'Hoàn thành'],
+        ...rows.map((r) => [r.email, r.display_name ?? '', statusLabel[r.status] ?? r.status, String(r.correct_count ?? ''),
+          String(r.answered_count ?? ''), r.prize ? prizeLabel[r.prize] : '', r.locked ? 'Có' : '', time(r.started_at), time(r.completed_at)]),
+      ])
+    } catch (err) {
+      setError(message(err, 'Không xuất được danh sách.'))
+    } finally {
+      setExporting(false)
+    }
+  }
 
   async function open(id: string) {
     setError('')
@@ -89,6 +116,7 @@ export function UsersSection({ onForbidden }: { onForbidden: () => void }) {
       <input type="search" inputMode="email" placeholder="Email người chơi" aria-label="Email người chơi"
         value={q} onChange={(e) => { setQ(e.target.value); setPage(1) }} />
       <FilterBar value={filter} onChange={(f) => { setFilter(f); setPage(1) }} />
+      <button className="primary" disabled={exporting || !data?.total} onClick={() => void exportXlsx()}>{exporting ? 'Đang xuất…' : 'Xuất Excel'}</button>
       {error && <p className="error" role="alert">{error}</p>}
       {data?.rows.length === 0 && <p className="muted">Không có người dùng</p>}
       <table>
