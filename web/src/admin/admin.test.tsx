@@ -12,7 +12,7 @@ vi.mock('../lib/supabase', () => ({ supabase: { auth } }))
 
 import { AdminApp } from './AdminApp'
 
-afterEach(() => { cleanup(); vi.clearAllMocks() })
+afterEach(() => { cleanup(); vi.clearAllMocks(); vi.unstubAllGlobals() })
 const signedIn = () => {
   auth.getSession.mockResolvedValue({ data: { session: { user: {} } } })
   rpc.mockResolvedValue({ ok: true, code: 'OK', data: [] })
@@ -53,4 +53,21 @@ it('FORBIDDEN shows no-access screen without search UI', async () => {
   render(<AdminApp />)
   expect(await screen.findByText('Không có quyền truy cập')).toBeTruthy()
   expect(screen.queryByLabelText('Email người chơi')).toBeNull()
+})
+
+it('claim: confirm then RPC, ALREADY_CLAIMED shown as notice', async () => {
+  signedIn()
+  const row = { player_id: 'p', email: 'p1@x', session_id: 's1', status: 'COMPLETED', correct_count: 10, answered_count: 12,
+    completed_at: null, qualified_for_reward: true, reward_claimed: false, reward_claimed_at: null }
+  rpc.mockImplementation(async (name: string) =>
+    name === 'admin_claim_reward' ? { ok: true, code: 'ALREADY_CLAIMED' } : { ok: true, code: 'OK', data: [row] })
+  vi.stubGlobal('confirm', () => true)
+  render(<AdminApp />)
+  await screen.findByText('Tìm')
+  search('p1')
+  fireEvent.click(await screen.findByText('Trao quà'))
+  expect(await screen.findByText('Người này đã nhận quà trước đó.')).toBeTruthy()
+  const call = rpc.mock.calls.find((c) => c[0] === 'admin_claim_reward')!
+  expect(call[1].p_session_id).toBe('s1')
+  expect(call[1].p_request_id).toBeTruthy()
 })
