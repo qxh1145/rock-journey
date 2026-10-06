@@ -10,6 +10,7 @@ import {
 import { AvatarMenu } from './components/TopBar'
 import { MedalOverlay } from './components/MedalOverlay'
 import { MusicSheet } from './components/MusicSheet'
+import { StartScreen } from './screens/StartScreen'
 import { GateScreen } from './screens/GateScreen'
 import { PlayScreen } from './screens/PlayScreen'
 import { ResultScreen } from './screens/ResultScreen'
@@ -234,8 +235,9 @@ function App() {
       {screen === 'setup' && <main className="screen"><h1>Nghệ nhân tạc đá</h1>
         <p>Thêm <code>VITE_SUPABASE_URL</code> và <code>VITE_SUPABASE_KEY</code> vào <code>.env.local</code>.</p></main>}
 
-      {screen === 'landing' && <GateScreen stage={game?.mascot_stage ?? 'RAW'} cta={user ? gateCta : 'Đăng nhập bằng Google'} error={error}
-        onCta={() => void (user ? start(gateCta) : signIn())} />}
+      {screen === 'landing' && (user
+        ? <GateScreen stage={game?.mascot_stage ?? 'RAW'} cta={gateCta} error={error} onCta={() => void start(gateCta)} />
+        : <StartScreen error={error} cta="Đăng nhập bằng Google" onCta={() => void signIn()} />)}
 
       {screen === 'playing' && game && intro !== null && <GateScreen stage={game.mascot_stage} cta={intro} leaving />}
       {screen === 'playing' && game && <PlayScreen intro={intro !== null} onIntroEnd={() => setIntro(null)} game={game} answeredQuestion={answeredQuestion} selected={selected}
