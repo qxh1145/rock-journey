@@ -41,6 +41,8 @@ context: []
 - Browser: shortcut from login installs correct session; repeat key sends once; outside login sends nothing; regular Google login remains available. Verify production deployment and actual Ctrl+Shift+P login.
 - Web build passed. Mocked browser repeated-key check: one invoke and one session installation; logged-in gate produced no extra calls. Real backend session validated /auth/v1/user email and authenticated role, get_current_session returned ok/NONE. GET rejected 405; other origin and disabled config rejected 403; request-body email ignored and fixed account preserved.
 - SQL confirms RLS enabled, anon SELECT false, authenticated UPDATE false, service-role UPDATE true. Advisor INFO for no policies is intentional deny-all; pre-existing function-search-path/security-definer/password warnings are unrelated to this change.
+- Real production browser Ctrl+Shift+P installed the session for honguyenvietanh1405@gmail.com and displayed the logged-in gate. Pressing again left the gate unchanged. Vercel deployment succeeded.
+- Matched migration filename versions to actual MCP-applied production history (20261006145335 and 20261006145620) to avoid duplicate schema application by future CLI deploys.
 
 ## Review Triage Log
 
