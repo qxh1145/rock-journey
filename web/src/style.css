@@ -252,3 +252,18 @@ h2 { font-size: 1.05rem; margin: 0; }
 .result .score { top: 416px; line-height: 24px; }
 .result .panel { top: 476px; min-height: 164px; }
 .result .bottom { top: auto; bottom: 46px; gap: 18px; }
+
+/* /admin: trang cuộn bình thường, không dùng khung .phone */
+.admin { height: 100%; overflow: auto; max-width: 640px; margin: 0 auto; padding: 16px; display: flex; flex-direction: column; gap: 12px; }
+.admin h1 { font-size: 1.3rem; margin: 0; }
+.admin-head { display: flex; justify-content: space-between; align-items: center; }
+.admin-nav { display: flex; gap: 8px; overflow-x: auto; }
+.admin-nav button { border: 0; border-radius: 12px; min-height: 44px; padding: 0 16px; background: #fff; }
+.admin-nav button[aria-current="true"] { background: var(--green); color: #fff; }
+.admin-section { display: flex; flex-direction: column; gap: 12px; }
+.admin-search { display: flex; gap: 8px; }
+.admin-search input { flex: 1; min-width: 0; min-height: 54px; border: 1px solid #d0d0d4; border-radius: 14px; padding: 0 14px; }
+.admin-search .primary { width: auto; padding: 0 20px; }
+.admin-search .primary:disabled { opacity: .5; }
+.admin-list { list-style: none; padding: 0; margin: 0; display: grid; gap: 8px; }
+.admin-list li { background: var(--card); border-radius: 14px; padding: 12px 14px; display: grid; gap: 2px; overflow-wrap: anywhere; }

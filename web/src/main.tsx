@@ -14,6 +14,7 @@ import { StartScreen } from './screens/StartScreen'
 import { PlayScreen } from './screens/PlayScreen'
 import { ResultScreen } from './screens/ResultScreen'
 import { ShowcaseScreen } from './screens/ShowcaseScreen'
+import { AdminApp } from './admin/AdminApp'
 
 const REPLAY_EMAIL = 'quandeptraixuhue@gmail.com'
 const NETWORK_ERROR = 'Không có kết nối mạng. Kiểm tra mạng rồi thử lại.'
@@ -263,4 +264,4 @@ function App() {
 const fit = () => document.documentElement.style.setProperty('--s', String(Math.min(innerWidth / 390, innerHeight / 844)))
 fit()
 addEventListener('resize', fit)
-ReactDOM.createRoot(document.getElementById('root')!).render(<App />)
+ReactDOM.createRoot(document.getElementById('root')!).render(location.pathname.replace(/\/$/, '') === '/admin' ? <AdminApp /> : <App />)

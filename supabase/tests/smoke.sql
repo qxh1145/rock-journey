@@ -27,6 +27,7 @@ begin
   r := get_result(sid);
   assert r->'data'->>'correct_count' = '10' and r->'data'->>'title' = 'MAM_NGHE' and r->'data'->>'mascot_stage' = 'FINISHED', r::text;
   assert admin_claim_reward(sid,'req-1')->>'code' = 'FORBIDDEN';  -- player không phải admin
+  assert admin_search_players('p1')->>'code' = 'FORBIDDEN';
 
   perform set_config('test.uid','00000000-0000-0000-0000-000000000002',false);
   assert jsonb_array_length(admin_search_players('p1')->'data') = 1;
