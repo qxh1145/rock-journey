@@ -10,7 +10,7 @@ export type TopBarProps = {
   musicTitle: string
 }
 
-export function TopBar({ title, user, menuOpen, onToggleMenu, onOpenMusic, musicTitle }: TopBarProps) {
+export function TopBar({ title, menuOpen, onToggleMenu, onOpenMusic, musicTitle }: TopBarProps) {
   const name = musicTitle || 'Đổi nhạc'
   const box = useRef<HTMLSpanElement>(null)
   // tên dài hơn khung → chạy chữ phải sang trái như biển hiệu, ~30px/s
@@ -23,7 +23,7 @@ export function TopBar({ title, user, menuOpen, onToggleMenu, onOpenMusic, music
   return (
     <header className="top">
       <button className="avatar" aria-label="Tài khoản" aria-expanded={menuOpen} onClick={onToggleMenu}>
-        {user?.user_metadata?.avatar_url ? <img src={user.user_metadata.avatar_url} alt="" /> : <img className="avatar-default" src="/assets/avatar.svg" alt="" />}
+        <img className="avatar-default" src="/assets/avatar-default.jpeg" alt="" />
       </button>
       <strong className="top-title">{title}</strong>
       <button className="ghost" aria-label={`Đổi nhạc: ${musicTitle}`} onClick={(e) => { e.currentTarget.focus(); onOpenMusic() }}>
