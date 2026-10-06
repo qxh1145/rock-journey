@@ -17,6 +17,7 @@ const signedIn = () => {
   auth.getSession.mockResolvedValue({ data: { session: { user: {} } } })
   rpc.mockResolvedValue({ ok: true, code: 'OK', data: [] })
 }
+const toLookup = async () => fireEvent.click(await screen.findByText('Tra cứu'))
 const search = (q: string) => {
   fireEvent.change(screen.getByLabelText('Email người chơi'), { target: { value: q } })
   fireEvent.click(screen.getByText('Tìm'))
@@ -32,6 +33,7 @@ it('signed out: prompts Google sign-in returning to /admin', async () => {
 it('empty query disables search', async () => {
   signedIn()
   render(<AdminApp />)
+  await toLookup()
   const btn = (await screen.findByText('Tìm')) as HTMLButtonElement
   expect(btn.disabled).toBe(true)
   fireEvent.change(screen.getByLabelText('Email người chơi'), { target: { value: '  ' } })
@@ -42,6 +44,7 @@ it('no match shows empty message', async () => {
   signedIn()
   rpc.mockResolvedValue({ ok: true, data: [] })
   render(<AdminApp />)
+  await toLookup()
   await screen.findByText('Tìm')
   search('nobody@x')
   expect(await screen.findByText('Không tìm thấy người chơi')).toBeTruthy()
@@ -63,6 +66,7 @@ it('claim: confirm then RPC, ALREADY_CLAIMED shown as notice', async () => {
     name === 'admin_claim_reward' ? { ok: true, code: 'ALREADY_CLAIMED' } : { ok: true, code: 'OK', data: [row] })
   vi.stubGlobal('confirm', () => true)
   render(<AdminApp />)
+  await toLookup()
   await screen.findByText('Tìm')
   search('p1')
   fireEvent.click(await screen.findByText('Trao quà'))
