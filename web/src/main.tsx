@@ -16,6 +16,7 @@ import { PlayScreen } from './screens/PlayScreen'
 import { ResultScreen } from './screens/ResultScreen'
 import { ShowcaseScreen } from './screens/ShowcaseScreen'
 import { AdminApp } from './admin/AdminApp'
+import { Analytics } from '@vercel/analytics/react'
 
 const REPLAY_EMAIL = 'quandeptraixuhue@gmail.com'
 const NETWORK_ERROR = 'Không có kết nối mạng. Kiểm tra mạng rồi thử lại.'
@@ -271,7 +272,8 @@ function App() {
       {musicOpen && <MusicSheet music={music} tracks={tracks} onClose={() => setMusicOpen(false)} />}
 
       {screen === 'result' && game?.title === 'MAM_NGHE' && badgeOpen && <MedalOverlay onClose={closeMedal} />}
-    </div></>
+    </div>
+    <Analytics /></>
   )
 }
 
