@@ -137,3 +137,71 @@ begin
   assert admin_get_user_detail(gen_random_uuid())->>'code' = 'NOT_FOUND';
   raise notice 'USERS PASS';
 end $$;
+
+-- xuất theo bộ lọc + chọn cột, nhập/kích hoạt bộ câu hỏi, bảng tiến độ trực tiếp
+insert into auth.users values ('00000000-0000-0000-0000-000000000006','p6@x.com',now(),'{}');
+insert into players (id, email_normalized, email_at_play) values ('00000000-0000-0000-0000-000000000006','p6@x.com','p6@x.com');
+insert into game_sessions (player_id, question_set_version, status, started_at, answered_count, correct_count)
+  values ('00000000-0000-0000-0000-000000000006','v1','IN_PROGRESS',now() - interval '1 hour',1,1);
+insert into answers (session_id, question_id, question_index, selected_option_id, is_correct, answered_at, idempotency_key)
+  select id, 'q1', 1, 'a', true, now() + interval '1 minute', 'k6' from game_sessions where player_id = '00000000-0000-0000-0000-000000000006';
+
+do $$
+declare
+  d jsonb; q jsonb; f text[] := array['email','status','correct_count'];
+begin
+  perform set_config('test.uid','00000000-0000-0000-0000-000000000003',false);
+  assert admin_export_report(null,null,null,null,null,null,f,false,'e0')->>'code' = 'FORBIDDEN';
+  assert admin_list_question_sets()->>'code' = 'FORBIDDEN';
+  assert admin_import_question_set('v2','[]')->>'code' = 'FORBIDDEN';
+  assert admin_activate_question_set('v1')->>'code' = 'FORBIDDEN';
+  assert admin_live_progress()->>'code' = 'FORBIDDEN';
+
+  perform set_config('test.uid','00000000-0000-0000-0000-000000000002',false);
+  -- export: số dòng = dashboard, chỉ các cột chọn, không có cột câu trả lời
+  d := admin_export_report('2026-06-01',null,null,6,null,null,f,false,'e1')->'data';
+  assert d->>'row_count' = admin_get_dashboard('2026-06-01',null,null,6)->'data'->>'total', d::text;
+  assert d->>'csv' = E'email,status,correct_count\n"p1@mail.com","COMPLETED","10"', d::text;
+  assert admin_export_report(null,null,null,null,null,null,f,false,'e1') = admin_export_report(null,null,null,null,null,null,f,false,'e1');
+  assert (select count(*) from audit_logs where request_id = 'e1') = 1;
+  d := (select after_json from audit_logs where request_id = 'e1');
+  assert d->'fields' = '["email","status","correct_count"]' and d->'filters'->>'score_min' = '6' and d->>'row_count' = '1', d::text;
+  d := admin_export_report(null,null,null,null,null,'CLAIMED',array['email'],true,'e2')->'data';
+  assert split_part(d->>'csv', E'\n', 1) = 'email,q1,q2,q3,q4,q5,q6,q7,q8,q9,q10,q11,q12' and d->>'csv' like '%"a (đúng)"%', d::text;
+  assert admin_export_report(null,null,null,null,null,null,array['password'],false,'e3')->>'code' = 'INVALID_INPUT';
+  assert admin_export_report(null,null,null,null,null,null,'{}',false,'e4')->>'code' = 'INVALID_INPUT';
+
+  -- import
+  q := (select jsonb_agg(jsonb_build_object('idx',i,'prompt','Câu mới '||i,'a','Đá','b','B','c','C','d','D','correct','c','explanation','Vì thế')) from generate_series(1,12) i);
+  d := admin_import_question_set('v1', q);
+  assert d->>'code' = 'INVALID_INPUT' and d->>'message' like '%đã tồn tại%', d::text;
+  d := admin_import_question_set('v2', q - 11);
+  assert d->>'code' = 'INVALID_INPUT' and d->>'message' like '%12 câu%', d::text;
+  d := admin_import_question_set('v2', jsonb_set(q, '{4,correct}', '"e"'));
+  assert d->>'code' = 'INVALID_INPUT' and d->>'message' like 'Dòng 5:%', d::text;
+  assert not exists (select 1 from question_sets where version = 'v2');
+  assert admin_import_question_set('v2', q)->>'code' = 'OK';
+  assert (select not active from question_sets where version = 'v2') and (select count(*) from questions where set_version = 'v2') = 12;
+  assert (select options->0->>'text' from questions where set_version = 'v2' and idx = 1) = 'Đá';
+  d := admin_list_question_sets()->'data';
+  assert jsonb_array_length(d) = 2 and d->0->>'version' = 'v2' and d->0->>'count' = '12' and d->1->>'active' = 'true', d::text;
+
+  -- kích hoạt: bộ duy nhất active; lượt cũ giữ v1, người mới nhận v2
+  assert admin_activate_question_set('nope')->>'code' = 'NOT_FOUND';
+  assert admin_activate_question_set('v2')->>'code' = 'OK';
+  assert (select array_agg(version) from question_sets where active) = '{v2}';
+  assert (select count(*) from game_sessions where question_set_version = 'v2') = 0;
+  assert (select count(*) from audit_logs where action in ('question_set_imported','question_set_activated')) = 2;
+  perform set_config('test.uid','00000000-0000-0000-0000-000000000009',false);
+  assert start_session()->'data'->'question'->>'prompt' = 'Câu mới 1';
+  update game_sessions set started_at = now() - interval '2 hours' where player_id = auth.uid();
+
+  -- live: 3 IN_PROGRESS (p5, p6, p9), mới hoạt động nhất trước
+  perform set_config('test.uid','00000000-0000-0000-0000-000000000002',false);
+  d := admin_live_progress()->'data';
+  assert (select string_agg(r->>'email', ',') from jsonb_array_elements(d) r) = 'p6@x.com,p5@x.com,p9@x.com', d::text;
+  assert d->0->>'answered' = '1' and d->0->>'correct' = '1' and d->0->>'current_idx' = '2', d::text;
+  assert jsonb_array_length(admin_live_progress(p_status => 'COMPLETED')->'data') = 0;
+  assert admin_live_progress(p_prize => 'X')->>'code' = 'INVALID_INPUT';
+  raise notice 'IMPORT/EXPORT/LIVE PASS';
+end $$;

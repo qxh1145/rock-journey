@@ -72,3 +72,31 @@ it('all qualified with empty first call: no blank line', async () => {
   await vi.waitFor(() => expect(dl.xlsx).toHaveBeenCalled())
   expect(dl.xlsx.mock.calls[0][1]).toEqual([['h'], ['b']])
 })
+
+it('filtered export passes dashboard filter, chosen fields and answers opt-in', async () => {
+  rpc.mockResolvedValue({ ok: true, code: 'OK', data: { csv: 'email,status,correct_count\n"Nguyễn@x.com","COMPLETED","10"', row_count: 1 } })
+  render(<ExportSection onForbidden={vi.fn()} />)
+  fireEvent.change(screen.getByRole('combobox', { name: 'Trạng thái' }), { target: { value: 'COMPLETED' } })
+  fireEvent.click(screen.getByLabelText('Mã lượt')) // bật thêm
+  fireEvent.click(screen.getByLabelText('Mã lượt')) // tắt lại
+  fireEvent.click(screen.getByText('Tải XLSX người chơi'))
+  await screen.findByText('1 dòng')
+  const args = rpc.mock.calls[0][1]
+  expect(args).toMatchObject({ p_status: 'COMPLETED', p_from: null, p_prize: null, p_fields: ['email', 'status', 'correct_count'], p_include_answers: false })
+  expect(args.p_request_id).toBeTruthy()
+  expect(dl.xlsx.mock.calls[0][0]).toMatch(/^players-\d{8}\.xlsx$/)
+  expect(dl.xlsx.mock.calls[0][1][1]).toEqual(['Nguyễn@x.com', 'COMPLETED', '10'])
+
+  fireEvent.click(screen.getByLabelText('Kèm câu trả lời (q1–q12)'))
+  fireEvent.click(screen.getByText('Tải CSV người chơi'))
+  await vi.waitFor(() => expect(rpc.mock.calls[1]?.[1].p_include_answers).toBe(true))
+})
+
+it('filtered export FORBIDDEN calls onForbidden', async () => {
+  rpc.mockResolvedValue({ ok: false, code: 'FORBIDDEN' })
+  const f = vi.fn()
+  render(<ExportSection onForbidden={f} />)
+  fireEvent.click(screen.getByText('Tải CSV người chơi'))
+  await vi.waitFor(() => expect(f).toHaveBeenCalled())
+  expect(dl.csv).not.toHaveBeenCalled()
+})
