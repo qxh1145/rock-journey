@@ -12,10 +12,7 @@ export const loadPrefs = (): Prefs => {
 }
 export const savePrefs = (p: Prefs) => { try { localStorage.setItem(PREFS_KEY, JSON.stringify(p)) } catch { /* bỏ qua */ } }
 
-// SFX: file /audio/sfx/<tên>.mp3; thiếu file thì phát beep tổng hợp để game vẫn có phản hồi
-const BEEP: Record<Sfx, [number, number]> = {
-  click: [660, 0.05], correct: [880, 0.15], wrong: [220, 0.2], saw: [90, 0.35], chisel: [140, 0.12], tear: [400, 0.08], finish: [1320, 0.3], badge: [1046, 0.4],
-}
+// SFX chỉ phát từ file audio; hiệu ứng chưa có file hoặc lỗi phát sẽ im lặng.
 const M = (f: string) => encodeURI(`/audio/music/${f}`)
 const SFX_URL: Partial<Record<Sfx, string>> = {
   saw: M('upgrade-sfx.mp3'),
@@ -29,17 +26,17 @@ export const DEFAULT_QUEUE = [M("Evil's Soft First Touches.mp3"), M('Fate\u00a0C
 export const FINALE_SONG = M('VSTRA - So Bad.mp3')
 
 const cache = new Map<Sfx, HTMLAudioElement | null>()
-let ctx: AudioContext | null = null
 let duck: (() => void) | null = null
 
 export const sfx = {
   enabled: loadPrefs().sfx,
   play(kind: Sfx, onEnd?: () => void) {
-    if (!this.enabled) return void onEnd?.()
+    const url = SFX_URL[kind]
+    if (!this.enabled || !url) return void onEnd?.()
     duck?.()
     let el = cache.get(kind)
     if (el === undefined) {
-      el = new Audio(SFX_URL[kind] ?? `/audio/sfx/${kind}.mp3`)
+      el = new Audio(url)
       el.volume = 0.7
       el.onerror = () => cache.set(kind, null)
       cache.set(kind, el)
@@ -48,19 +45,9 @@ export const sfx = {
       const a = el.cloneNode() as HTMLAudioElement
       a.volume = 0.7
       if (onEnd) a.onended = onEnd
-      a.play().catch(() => { beep(kind); onEnd?.() })
-    } else { beep(kind); onEnd?.() }
+      a.play().catch(() => { onEnd?.() })
+    } else { onEnd?.() }
   },
-}
-
-function beep(kind: Sfx) {
-  ctx ??= new AudioContext()
-  const [f, d] = BEEP[kind]
-  const o = ctx.createOscillator(), g = ctx.createGain()
-  o.frequency.value = f
-  g.gain.value = 0.08
-  o.connect(g).connect(ctx.destination)
-  o.start(); o.stop(ctx.currentTime + d)
 }
 
 // bài mặc định / bài kết không nằm trong playlist → lấy tên từ file đang phát
