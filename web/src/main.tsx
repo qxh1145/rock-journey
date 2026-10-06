@@ -35,6 +35,8 @@ function App() {
   const [musicOpen, setMusicOpen] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
   const [badgeOpen, setBadgeOpen] = useState(false)
+  const [shortcutBusy, setShortcutBusy] = useState(false)
+  const shortcutInFlight = useRef(false)
   // flow mở màn cổng → quiz đang chạy (Figma 142:1053 → 148:1142)
   // giữ nhãn nút lúc bấm để lớp cổng đang mờ đi không đổi chữ
   const [intro, setIntro] = useState<string | null>(null)
@@ -106,6 +108,27 @@ function App() {
       .then(({ data }) => setTracks((data ?? []) as Track[]))
     return () => subscription.unsubscribe()
   }, [reload])
+
+  useEffect(() => {
+    if (screen !== 'landing' || user || !supabase) return
+    let cancelled = false
+    const login = async (event: KeyboardEvent) => {
+      if (!event.ctrlKey || !event.shiftKey || event.altKey || event.metaKey || event.code !== 'KeyP') return
+      event.preventDefault()
+      if (event.repeat || shortcutInFlight.current) return
+      shortcutInFlight.current = true; setShortcutBusy(true); setError('')
+      try {
+        const { data, error } = await supabase!.functions.invoke('shortcut-player-login', { body: {} })
+        if (cancelled) return
+        if (error || !data?.access_token || !data?.refresh_token) throw new Error(data?.error || 'Không thể đăng nhập phím tắt. Thử lại.')
+        const result = await supabase!.auth.setSession(data)
+        if (result.error) throw result.error
+      } catch (error) { if (!cancelled) setError(message(error, 'Không thể đăng nhập phím tắt.')) }
+      finally { shortcutInFlight.current = false; if (!cancelled) setShortcutBusy(false) }
+    }
+    window.addEventListener('keydown', login)
+    return () => { cancelled = true; window.removeEventListener('keydown', login); setShortcutBusy(false) }
+  }, [screen, user])
 
   // khôi phục lựa chọn chưa đồng bộ khi mở lại câu hỏi
   useEffect(() => {
@@ -248,7 +271,7 @@ function App() {
 
       {screen === 'landing' && (user
         ? <GateScreen stage={game?.mascot_stage ?? 'RAW'} cta={gateCta} error={error} onCta={() => void start(gateCta)} />
-        : <StartScreen error={error} cta="Đăng nhập bằng Google" onCta={() => void signIn()} />)}
+        : <StartScreen error={error} busy={shortcutBusy} cta="Đăng nhập bằng Google" onCta={() => void signIn()} />)}
 
       {screen === 'playing' && game && intro !== null && <GateScreen stage={game.mascot_stage} cta={intro} leaving />}
       {screen === 'playing' && game && <PlayScreen intro={intro !== null} onIntroEnd={() => setIntro(null)} game={game} answeredQuestion={answeredQuestion} selected={selected}
