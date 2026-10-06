@@ -3,11 +3,13 @@ import type { Session } from '@supabase/supabase-js'
 import { supabase } from '../lib/supabase'
 import { callRpc } from '../game'
 import { LookupSection } from './LookupSection'
+import { ExportSection } from './ExportSection'
 
 type Ctx = { onForbidden: () => void }
 // slot đăng ký: epic sau chỉ cần thêm phần tử vào đây
 export const adminSections: { id: string; label: string; render: (ctx: Ctx) => ReactNode }[] = [
   { id: 'lookup', label: 'Tra cứu', render: (ctx) => <LookupSection {...ctx} /> },
+  { id: 'export', label: 'Xuất danh sách', render: (ctx) => <ExportSection {...ctx} /> },
 ]
 
 export function AdminApp() {

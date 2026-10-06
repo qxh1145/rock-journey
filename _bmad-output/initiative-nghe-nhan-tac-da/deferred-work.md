@@ -35,3 +35,6 @@
 - source_plan: `_bmad-output/initiative-nghe-nhan-tac-da/epic-prize-desk/story-admin-shell-and-email-lookup-tracer-plan.md`
   summary: Add `<origin>/admin` (staging + prod) to Supabase Auth allowed redirect URLs so admin sign-in returns to /admin.
   evidence: Unverified (medium): AdminApp signIn uses redirectTo origin+'/admin'; previously only origin was used. Settle by checking Supabase Auth URL configuration.
+- source_plan: `/Users/quan/Work/rock-journey/_bmad-output/initiative-nghe-nhan-tac-da/epic-prize-desk/story-export-prize-list-to-csv-and-xlsx-plan.md`
+  summary: Neutralize spreadsheet formula injection (cells starting with = + - @) in prize-list CSV/XLSX exports.
+  evidence: Player emails are user-supplied and written raw into files opened in Excel; fix belongs in admin_export_report or the shared fileExport helpers.
