@@ -38,5 +38,12 @@ begin
   assert admin_claim_reward(sid,'req-1')->>'code' = 'ALREADY_CLAIMED';
   assert (select count(*) from audit_logs where action = 'reward_claimed' and target_id = sid::text) = 1;
   assert admin_get_dashboard()->>'code' = 'OK';
+  -- xuất báo cáo: row_count khớp game_sessions, mỗi lần gọi thêm một audit, title đã đổi tên
+  assert (admin_export_report(null,'CLAIMED','x1')->'data'->>'row_count')::int = (select count(*) from game_sessions where reward_claimed);
+  assert (admin_export_report(null,'QUALIFIED_UNCLAIMED','x2')->'data'->>'row_count')::int = (select count(*) from game_sessions where qualified_for_reward and not reward_claimed);
+  assert (select count(*) from audit_logs where action = 'report_exported') = 2;
+  assert admin_export_report(null,'CLAIMED','x3')->'data'->>'csv' like '%Mầm Nghề%';
+  perform set_config('test.uid','00000000-0000-0000-0000-000000000001',false);
+  assert admin_export_report(null,'CLAIMED','x4')->>'code' = 'FORBIDDEN';
   raise notice 'ALL PASS';
 end $$;
