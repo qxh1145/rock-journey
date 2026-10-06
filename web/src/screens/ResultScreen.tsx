@@ -11,15 +11,13 @@ export function ResultScreen({ game, topBar, onShowMedal, onReplay }: {
     <h1>Bạn đã hoàn thành!</h1>
     <p className="muted">Một tác phẩm, một khởi đầu mới.</p>
     <Mascot stage="FINISHED" small />
-    {game.title === 'MAM_NGHE' && <p className="title-name">Mầm Nghề</p>}
+    <p className="title-name">{game.title === 'MAM_NGHE' ? 'Mầm Nghề' : 'Cám ơn bạn đã tham gia'}</p>
     <p className="score">{game.correct_count} / 12 câu đúng</p>
-    <section className="panel">
-      {game.qualified_for_reward ? <>
-        <h2>Đủ điều kiện nhận quà</h2>
-        <p>Đưa email tài khoản Google cho ban tổ chức để kiểm tra và nhận quà.</p>
-        <p className="small">Trạng thái: {game.reward_claimed ? 'Đã nhận quà' : 'Chưa nhận quà'}</p>
-      </> : <p>Cảm ơn bạn đã tham gia hành trình tạc đá cùng chúng tôi.</p>}
-    </section>
+    {game.qualified_for_reward && <section className="panel">
+      <h2>Đủ điều kiện nhận quà</h2>
+      <p>Đưa email tài khoản Google cho nhân viên để kiểm tra và nhận quà.</p>
+      <p className="small">Trạng thái: {game.reward_claimed ? 'Đã nhận quà' : 'Chưa nhận quà'}</p>
+    </section>}
     <div className="bottom">
       {game.title === 'MAM_NGHE' && <button className="primary" onClick={onShowMedal}>Xem lại huy chương</button>}
       {onReplay && <button className="primary" onClick={onReplay}>Chơi lại</button>}

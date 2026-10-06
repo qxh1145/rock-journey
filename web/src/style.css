@@ -189,6 +189,7 @@ h2 { font-size: 1.05rem; margin: 0; }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: .2s !important; animation-iteration-count: 1 !important; transition-duration: .2s !important; }
   .fx { display: none; }
+  .badge-img { animation: none; } /* CAP-8: không zoom huy chương */
   .play .stone.shake { animation: none; }
   /* FR-16: lật trang nhẹ thay cho xé; vẫn giữ animation để onAnimationEnd mở khoá */
   .tear.keep { display: none; }
