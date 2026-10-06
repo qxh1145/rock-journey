@@ -1,0 +1,121 @@
+[[entry]]
+id = 1
+type = "story"
+title = "Dashboard KPIs tracer"
+description = "Extends admin_get_dashboard with session-status, score and prize-status filters and renders the §16A KPI tiles (total, in progress, completed, resume rate, avg score, eligible, unclaimed, claimed) in the admin shell, and owns the shared admin filter shape (date range, session status, score, prize status) and the admin nav/route slot that later screens register into."
+verify = "SQL test asserts KPI numbers on seeded data and FORBIDDEN for a non-admin; on staging an admin sees the KPIs change when filters change."
+covers = ["FR-17"]
+after = ["3.1", "1.1", "1.2"]
+hitl = false
+risk = "medium"
+
+[[entry]]
+id = 2
+type = "story"
+title = "User search and detail"
+description = "Adds admin_search_users (paginated, filters) and admin_get_user_detail (profile, sessions, progress, answers) with a user list (reusing entry 1's filter shape) and a read-only profile screen registered in the admin nav slot."
+verify = "SQL test covers pagination, filters and FORBIDDEN; an admin finds a seeded user and sees their progress and answers."
+covers = ["FR-18"]
+after = [1]
+hitl = false
+risk = "medium"
+
+[[entry]]
+id = 3
+type = "story"
+title = "Lock, anonymize and soft-delete users"
+description = "Adds players.anonymized_at/deleted_at (players.locked stays the lock flag), admin_update_user(user_id, patch, reason) with a field allowlist and before/after audit, start_session refusal for deleted/anonymized players (locked is already refused), and the profile actions."
+verify = "SQL test: allowed fields change and are audited, score/answers cannot be edited, a deleted player cannot start a session, non-admin gets FORBIDDEN; actions work from the profile screen."
+covers = ["FR-19"]
+after = [2, "1.3"]
+hitl = false
+risk = "high"
+
+[[entry]]
+id = 4
+type = "story"
+title = "Prize status adjustment"
+description = "Adds a prize-status adjustment RPC requiring a reason and confirmation, allowing only transitions the reward_claimed/qualified_for_reward check permits, auditing before/after with the original claim kept, never deleting, with the action on the profile screen."
+verify = "SQL test: adjustment without a reason is INVALID_INPUT, with one it is audited before/after, non-admin gets FORBIDDEN; an admin adjusts a seeded session from the profile."
+covers = ["FR-19"]
+after = [3]
+hitl = false
+risk = "medium"
+
+[[entry]]
+id = 5
+type = "story"
+title = "Question set management"
+description = "Adds a status (draft/active/archived) on question_sets and admin_manage_questions (new version, edit drafts only, activate, archive) with an audited content screen; locked answers are never touched."
+verify = "SQL test: editing an active question is refused, activating a draft version makes it the only active set, every action is audited, non-admin gets FORBIDDEN; screen flow works on staging."
+covers = ["FR-19"]
+after = [1, "1.3"]
+hitl = false
+risk = "high"
+
+[[entry]]
+id = 6
+type = "story"
+title = "Playlist management"
+description = "Adds admin_manage_playlist (add, edit title/order/URL/active, deactivate) with audit and a playlist screen registered in the admin nav slot."
+verify = "SQL test covers each action, audit row and FORBIDDEN; a change made by an admin shows in the player music sheet."
+covers = ["FR-19"]
+after = [1, "1.3"]
+hitl = false
+risk = "low"
+
+[[entry]]
+id = 7
+type = "story"
+title = "Admin role grant and revoke"
+description = "Adds audited grant, change-status and revoke RPCs over admin_roles (re-grant updates the row) and an admin accounts screen registered in the admin nav slot; an admin cannot revoke themselves."
+verify = "SQL test: grant then revoke flips access to admin RPCs, both audited, self-revoke refused, non-admin gets FORBIDDEN."
+covers = ["FR-19"]
+after = [1, "1.3"]
+hitl = false
+risk = "medium"
+
+[[entry]]
+id = 8
+type = "story"
+title = "CSV export with fields and filters"
+description = "Extends admin_export_report with selectable fields and entry 1's filter shape, excludes detailed answers unless opted in, audits filters/fields/row count, and downloads UTF-8 CSV from the dashboard."
+verify = "SQL test: row count equals the dashboard count for the same filters, only selected columns appear, export is audited, a retry with the same request_id returns the first result, non-admin gets FORBIDDEN; downloaded file opens with Vietnamese text intact."
+covers = ["FR-20"]
+after = [1, 2, "1.3"]
+hitl = false
+risk = "medium"
+
+[[entry]]
+id = 9
+type = "story"
+title = "Dashboard time series, activity and alerts"
+description = "Adds time-series counts and a recent-activity table from audit_logs and sessions to the dashboard."
+verify = "SQL test on seeded data checks the series buckets; the dashboard shows recent admin actions after a change; non-admin gets FORBIDDEN."
+covers = ["FR-17"]
+after = [8, "1.3"]
+hitl = false
+risk = "low"
+
+[[entry]]
+id = 11
+type = "story"
+title = "Live player progress board"
+description = "Adds admin_live_progress (in-progress sessions with answered/correct count, current question and last activity) and a board in the admin nav slot that refreshes every few seconds, using entry 1's filter shape."
+verify = "SQL test on seeded sessions checks the counts and FORBIDDEN for a non-admin; on staging the board shows a player's answer within one refresh after they submit it."
+covers = ["FR-17", "FR-18"]
+after = [1]
+hitl = false
+risk = "medium"
+notes = ["admin phải xem dược tiến độ làm bài của user trong thời gian thực"]
+
+[[entry]]
+id = 10
+type = "story"
+title = "Refactor sweep"
+description = "Cleans up code and review findings deferred during this epic; cleanup only."
+verify = "All admin SQL tests, unit tests and existing Playwright tests pass after the sweep."
+covers = []
+after = [1, 2, 3, 4, 5, 6, 7, 8, 9, 11]
+hitl = false
+risk = "low"

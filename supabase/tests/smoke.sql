@@ -37,7 +37,6 @@ begin
   assert admin_claim_reward(sid,'req-2')->>'code' = 'ALREADY_CLAIMED';
   assert admin_claim_reward(sid,'req-1')->>'code' = 'ALREADY_CLAIMED';
   assert (select count(*) from audit_logs where action = 'reward_claimed' and target_id = sid::text) = 1;
-  assert admin_get_dashboard()->>'code' = 'OK';
   -- xuất báo cáo: row_count khớp game_sessions, mỗi lần gọi thêm một audit, title đã đổi tên
   assert (admin_export_report(null,'CLAIMED','x1')->'data'->>'row_count')::int = (select count(*) from game_sessions where reward_claimed);
   assert (admin_export_report(null,'QUALIFIED_UNCLAIMED','x2')->'data'->>'row_count')::int = (select count(*) from game_sessions where qualified_for_reward and not reward_claimed);
@@ -46,4 +45,52 @@ begin
   perform set_config('test.uid','00000000-0000-0000-0000-000000000001',false);
   assert admin_export_report(null,'CLAIMED','x4')->>'code' = 'FORBIDDEN';
   raise notice 'ALL PASS';
+end $$;
+
+-- dashboard: thêm 3 lượt bên cạnh lượt của P1 (COMPLETED 10/12, đã nhận quà)
+insert into auth.users select ('00000000-0000-0000-0000-00000000000'||i)::uuid, 'p'||i||'@x.com', now(), '{}' from generate_series(3,5) i;
+insert into players (id, email_normalized, email_at_play) select id, email, email from auth.users where email like 'p_@x.com';
+insert into game_sessions (player_id, question_set_version, status, started_at, answered_count, correct_count) values
+  ('00000000-0000-0000-0000-000000000003','v1','COMPLETED','2026-01-01',12,10),  -- đủ điều kiện, chưa nhận
+  ('00000000-0000-0000-0000-000000000004','v1','COMPLETED','2026-01-01',12,5),
+  ('00000000-0000-0000-0000-000000000005','v1','IN_PROGRESS',now(),3,2);
+
+do $$
+declare
+  k text := 'total,in_progress,completed,resume_rate,avg_score,eligible,unclaimed,claimed';
+  d jsonb;
+begin
+  -- P5 mở lại lượt đang chơi → resume_count = 1
+  perform set_config('test.uid','00000000-0000-0000-0000-000000000005',false);
+  assert get_current_session()->>'code' = 'IN_PROGRESS';
+  assert (select resume_count from game_sessions where player_id = auth.uid()) = 1;
+  assert admin_get_dashboard()->>'code' = 'FORBIDDEN';
+
+  perform set_config('test.uid','00000000-0000-0000-0000-000000000002',false);
+  -- giá trị theo thứ tự k
+  d := admin_get_dashboard()->'data';
+  assert (select string_agg(coalesce(d->>x,'-'),',') from unnest(string_to_array(k,',')) x) = '4,1,3,0.25,8.33,2,1,1', d::text;
+  d := admin_get_dashboard(null, '2026-06-01')->'data';  -- kiểu gọi cũ 2 tham số
+  assert (select string_agg(coalesce(d->>x,'-'),',') from unnest(string_to_array(k,',')) x) = '2,0,2,0.00,7.50,1,1,0', d::text;
+  d := admin_get_dashboard('2026-06-01', null)->'data';
+  assert (select string_agg(coalesce(d->>x,'-'),',') from unnest(string_to_array(k,',')) x) = '2,1,1,0.50,10.00,1,0,1', d::text;
+  d := admin_get_dashboard(p_status => 'IN_PROGRESS')->'data';
+  assert (select string_agg(coalesce(d->>x,'-'),',') from unnest(string_to_array(k,',')) x) = '1,1,0,1.00,-,0,0,0', d::text;
+  d := admin_get_dashboard(p_score_min => 6, p_score_max => 10)->'data';
+  assert (select string_agg(coalesce(d->>x,'-'),',') from unnest(string_to_array(k,',')) x) = '2,0,2,0.00,10.00,2,1,1', d::text;
+  d := admin_get_dashboard(p_score_max => 5)->'data';
+  assert (select string_agg(coalesce(d->>x,'-'),',') from unnest(string_to_array(k,',')) x) = '2,1,1,0.50,5.00,0,0,0', d::text;
+  d := admin_get_dashboard(p_prize => 'NOT_ELIGIBLE')->'data';
+  assert (select string_agg(coalesce(d->>x,'-'),',') from unnest(string_to_array(k,',')) x) = '2,1,1,0.50,5.00,0,0,0', d::text;
+  d := admin_get_dashboard(p_prize => 'UNCLAIMED')->'data';
+  assert (select string_agg(coalesce(d->>x,'-'),',') from unnest(string_to_array(k,',')) x) = '1,0,1,0.00,10.00,1,1,0', d::text;
+  d := admin_get_dashboard(p_prize => 'CLAIMED')->'data';
+  assert (select string_agg(coalesce(d->>x,'-'),',') from unnest(string_to_array(k,',')) x) = '1,0,1,0.00,10.00,1,0,1', d::text;
+  d := admin_get_dashboard(p_score_min => 11)->'data';  -- rỗng
+  assert (select string_agg(coalesce(d->>x,'-'),',') from unnest(string_to_array(k,',')) x) = '0,0,0,-,-,0,0,0', d::text;
+
+  assert admin_get_dashboard(p_status => 'DONE')->>'code' = 'INVALID_INPUT';
+  assert admin_get_dashboard(p_prize => 'X')->>'code' = 'INVALID_INPUT';
+  assert admin_get_dashboard(p_score_min => 8, p_score_max => 3)->>'code' = 'INVALID_INPUT';
+  raise notice 'DASHBOARD PASS';
 end $$;

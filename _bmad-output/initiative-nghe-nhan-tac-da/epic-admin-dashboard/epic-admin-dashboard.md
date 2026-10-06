@@ -47,3 +47,4 @@ Admin dashboard, CRUD and export within the admin shell from epic-prize-desk.
 - Decision (2026-10-06): §16A dashboard alerts deferred until telemetry exists.
 - Decision (2026-10-06): admin_get_user_detail writes no read-audit row; only changes and exports are audited.
 - Decision (2026-10-06): exporting detailed answers needs only the admin's explicit opt-in, audited; no separate permission.
+- Decision (2026-10-06): entry 11 adds a live progress board; it polls an admin RPC every few seconds instead of using Supabase Realtime, so no admin RLS on game_sessions is needed.

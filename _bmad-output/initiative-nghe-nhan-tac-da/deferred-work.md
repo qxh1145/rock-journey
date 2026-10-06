@@ -38,3 +38,6 @@
 - source_plan: `/Users/quan/Work/rock-journey/_bmad-output/initiative-nghe-nhan-tac-da/epic-prize-desk/story-export-prize-list-to-csv-and-xlsx-plan.md`
   summary: Neutralize spreadsheet formula injection (cells starting with = + - @) in prize-list CSV/XLSX exports.
   evidence: Player emails are user-supplied and written raw into files opened in Excel; fix belongs in admin_export_report or the shared fileExport helpers.
+- source_plan: `/Users/quan/Work/rock-journey/_bmad-output/initiative-nghe-nhan-tac-da/epic-admin-dashboard/story-dashboard-kpis-tracer-plan.md`
+  summary: resume_count increments on every get_current_session call while IN_PROGRESS, including error retries and auth reloads, not only real returns.
+  evidence: web/src/main.tsx loadCurrentRoute/reload both call get_current_session; resume_rate counts any session with resume_count > 0.
