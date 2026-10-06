@@ -32,7 +32,11 @@ begin
   perform set_config('test.uid','00000000-0000-0000-0000-000000000002',false);
   assert jsonb_array_length(admin_search_players('p1')->'data') = 1;
   assert admin_claim_reward(sid,'req-1')->>'code' = 'OK';
+  assert (select count(*) from audit_logs where action = 'reward_claimed' and target_id = sid::text) = 1;
+  -- lần trao thứ hai (tuần tự; đồng thời dựa vào khóa for update, chưa test): không thêm audit
   assert admin_claim_reward(sid,'req-2')->>'code' = 'ALREADY_CLAIMED';
+  assert admin_claim_reward(sid,'req-1')->>'code' = 'ALREADY_CLAIMED';
+  assert (select count(*) from audit_logs where action = 'reward_claimed' and target_id = sid::text) = 1;
   assert admin_get_dashboard()->>'code' = 'OK';
   raise notice 'ALL PASS';
 end $$;
