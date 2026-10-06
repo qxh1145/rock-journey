@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react'
+import { useLayoutEffect, useRef, type ReactNode } from 'react'
 import { sfx } from '../audio'
 import { Mascot } from '../components/Mascot'
 import { Notebook } from '../components/Notebook'
@@ -6,8 +6,10 @@ import { TopBar, type TopBarProps } from '../components/TopBar'
 import { optText, type GameState, type Question, type Stage } from '../game'
 
 export function PlayScreen({ game, answeredQuestion, selected, submitting, waitingSync, statusMessage, carving, torn, topBar,
-  onSelect, onSubmit, onNext, onCarved, onTearEnd }: {
+  onSelect, onSubmit, onNext, onCarved, onTearEnd, intro, onIntroEnd }: {
   game: GameState
+  intro?: boolean
+  onIntroEnd?: () => void
   answeredQuestion: Question | null
   selected: string | null
   submitting: boolean
@@ -29,7 +31,30 @@ export function PlayScreen({ game, answeredQuestion, selected, submitting, waiti
     <p className="nb-explain">{game.answer.explanation}</p>
   </Notebook> : null
 
-  return <main className="screen play">
+  const root = useRef<HTMLElement>(null)
+  // flow mở màn (Figma 142:1053 → 148:1081 smart animate 700ms ease-in-out; chờ 120ms; → 148:1142 400ms ease-out)
+  useLayoutEffect(() => {
+    if (!intro) return
+    const el = root.current!
+    const inOut = 'cubic-bezier(.42, 0, .58, 1)'
+    const fade = (sel: string, o: KeyframeAnimationOptions) =>
+      [...el.querySelectorAll(sel)].map((n) => n.animate({ opacity: [0, 1] }, { fill: 'backwards', ...o }))
+    fade('.top, .track', { duration: 700, easing: inOut })
+    const stone = el.querySelector<HTMLImageElement>('.stone')
+    if (stone) {
+      // đá ở cổng: hộp 148×105 @(44,333) contain căn giữa → hộp .play .stone contain căn đáy; neo ở đáy giữa ảnh
+      const a = stone.naturalWidth / stone.naturalHeight || 1000 / 709
+      const w0 = Math.min(148, 105 * a), w1 = Math.min(stone.offsetWidth, stone.offsetHeight * a)
+      const dx = 44 + 148 / 2 - (stone.offsetLeft + stone.offsetWidth / 2)
+      const dy = 333 + 105 / 2 + w0 / a / 2 - (stone.offsetTop + stone.offsetHeight)
+      stone.animate({ transform: [`translate(${dx}px, ${dy}px) scale(${w0 / w1})`, 'none'], transformOrigin: ['50% 100%', '50% 100%'], opacity: [1, 1] },
+        { duration: 700, easing: inOut })
+    }
+    const last = fade('.nb-stack, .bottom', { duration: 400, delay: 820, easing: 'cubic-bezier(0, 0, .58, 1)' })
+    void Promise.all(last.map((x) => x.finished)).then(onIntroEnd, () => {})
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
+
+  return <main className="screen play" ref={root} inert={intro}>
     <TopBar title={`Câu ${Math.min(game.answer ? game.answered_count : game.answered_count + 1, 12)}/12`} {...topBar} />
     <div className="track"><div style={{ width: `${(game.answered_count / 12) * 100}%` }} /></div>
     <Mascot stage={game.mascot_stage} carving={carving} onCarved={onCarved} />

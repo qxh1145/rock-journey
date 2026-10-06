@@ -10,7 +10,7 @@ import {
 import { AvatarMenu } from './components/TopBar'
 import { MedalOverlay } from './components/MedalOverlay'
 import { MusicSheet } from './components/MusicSheet'
-import { StartScreen } from './screens/StartScreen'
+import { GateScreen } from './screens/GateScreen'
 import { PlayScreen } from './screens/PlayScreen'
 import { ResultScreen } from './screens/ResultScreen'
 import { ShowcaseScreen } from './screens/ShowcaseScreen'
@@ -34,6 +34,9 @@ function App() {
   const [musicOpen, setMusicOpen] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
   const [badgeOpen, setBadgeOpen] = useState(false)
+  // flow mở màn cổng → quiz đang chạy (Figma 142:1053 → 148:1142)
+  // giữ nhãn nút lúc bấm để lớp cổng đang mờ đi không đổi chữ
+  const [intro, setIntro] = useState<string | null>(null)
   // mascot hiển thị: giữ stage cũ trong lúc chạy animation đục rồi mới đổi
   const [carving, setCarving] = useState<{ from: Stage; key: string } | null>(null)
   // trang sổ cũ đang bị xé (Figma: xé trên xuống ~0,8s)
@@ -73,8 +76,9 @@ function App() {
   }, [loadCurrentRoute])
 
   const starting = useRef(false)
-  async function start() {
-    if (game) return setScreen('playing')
+  const enterPlay = (cta: string) => { setIntro(matchMedia('(prefers-reduced-motion: reduce)').matches ? null : cta); setScreen('playing') }
+  async function start(cta: string) {
+    if (game) return enterPlay(cta)
     if (starting.current) return
     starting.current = true
     const s = await callRpc<GameState>('start_session').catch(() => null).finally(() => { starting.current = false })
@@ -84,7 +88,8 @@ function App() {
       return handleRpcError(s, 'Không thể bắt đầu lượt chơi.')
     }
     setGame(s.data)
-    setScreen(s.data.status === 'COMPLETED' ? 'result' : 'playing')
+    if (s.data.status === 'COMPLETED') return setScreen('result')
+    enterPlay(cta)
   }
 
   useEffect(() => {
@@ -217,6 +222,7 @@ function App() {
     setSelected(null)
   }
 
+  const gateCta = game?.status === 'IN_PROGRESS' ? `Tiếp tục câu ${game.answered_count + 1}` : 'BẮT ĐẦU KHÁM PHÁ'
   const topBar = { user, menuOpen, onToggleMenu: () => setMenuOpen((v) => !v), onOpenMusic: () => setMusicOpen(true), musicTitle: trackTitle(music.track, tracks) }
 
   return (
@@ -228,11 +234,11 @@ function App() {
       {screen === 'setup' && <main className="screen"><h1>Nghệ nhân tạc đá</h1>
         <p>Thêm <code>VITE_SUPABASE_URL</code> và <code>VITE_SUPABASE_KEY</code> vào <code>.env.local</code>.</p></main>}
 
-      {screen === 'landing' && <StartScreen error={error}
-        cta={!user ? 'Đăng nhập bằng Google' : game?.status === 'IN_PROGRESS' ? `Tiếp tục câu ${game.answered_count + 1}` : 'Bắt đầu'}
-        onCta={() => void (user ? start() : signIn())} />}
+      {screen === 'landing' && <GateScreen stage={game?.mascot_stage ?? 'RAW'} cta={user ? gateCta : 'Đăng nhập bằng Google'} error={error}
+        onCta={() => void (user ? start(gateCta) : signIn())} />}
 
-      {screen === 'playing' && game && <PlayScreen game={game} answeredQuestion={answeredQuestion} selected={selected}
+      {screen === 'playing' && game && intro !== null && <GateScreen stage={game.mascot_stage} cta={intro} leaving />}
+      {screen === 'playing' && game && <PlayScreen intro={intro !== null} onIntroEnd={() => setIntro(null)} game={game} answeredQuestion={answeredQuestion} selected={selected}
         submitting={submitting} waitingSync={waitingSync} statusMessage={statusMessage} carving={carving} torn={torn} topBar={topBar}
         onSelect={setSelected} onSubmit={() => void submitAnswer()} onNext={next}
         onCarved={() => setCarving(null)} onTearEnd={() => setTorn(null)} />}
