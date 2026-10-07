@@ -7,6 +7,7 @@
 }
 * { box-sizing: border-box; }
 html, body { margin: 0; height: 100%; overflow: hidden; background: var(--bg); color: var(--fg); font: 16px/1.45 'Be Vietnam Pro', system-ui, sans-serif; }
+#root { height: 100%; }
 html:has(.gate:not(.leaving)), body:has(.gate:not(.leaving)) { background: var(--gate-bg); }
 button, input { font: inherit; color: inherit; }
 button { cursor: pointer; }
@@ -279,6 +280,7 @@ h2 { font-size: 1.05rem; margin: 0; }
 
 /* /admin: trang cuộn bình thường, không dùng khung .phone */
 .admin { height: 100%; overflow: auto; max-width: 640px; margin: 0 auto; padding: 16px; display: flex; flex-direction: column; gap: 12px; }
+.admin > * { flex-shrink: 0; }
 .admin h1 { font-size: 1.3rem; margin: 0; }
 .admin-head { display: flex; justify-content: space-between; align-items: center; }
 .admin-nav { display: flex; gap: 8px; overflow-x: auto; }
