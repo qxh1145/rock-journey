@@ -45,5 +45,6 @@ The client may hide admin screens, using the `FORBIDDEN` result of an admin RPC 
 | `admin_export_report` | `20261005000000_init.sql` | yes |
 | `admin_search_players` | `20261005020000_drop_staff_role.sql` | yes |
 | `admin_claim_reward` | `20261005020000_drop_staff_role.sql` | yes |
+| `admin_reset_player_progress` | `20261007115652_admin_reset_player_progress.sql` | yes |
 
 Add a row to this table for every new `admin_*` RPC.

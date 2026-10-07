@@ -12,7 +12,7 @@ type Page = { total: number; page: number; page_size: number; rows: Row[] }
 type Detail = {
   profile: { email: string; display_name: string | null; locked: boolean; first_seen_at: string; last_seen_at: string }
   session: null | {
-    status: string; answered_count: number; correct_count: number; started_at: string; completed_at: string | null
+    session_id: string; status: string; answered_count: number; correct_count: number; started_at: string; completed_at: string | null
     resume_count: number; qualified_for_reward: boolean; reward_claimed: boolean; reward_claimed_at: string | null
   }
   answers: { question_index: number; prompt: string; selected_text: string | null; is_correct: boolean; answered_at: string }[]
@@ -22,29 +22,39 @@ const statusLabel: Record<string, string> = { NONE: 'Chưa chơi', IN_PROGRESS: 
 const prizeLabel: Record<string, string> = { NOT_ELIGIBLE: 'Không đủ điều kiện', UNCLAIMED: 'Chưa nhận', CLAIMED: 'Đã nhận' }
 const time = (t: string | null) => (t ? new Date(t).toLocaleString('vi-VN') : '—')
 
-export function UsersSection({ onForbidden }: { onForbidden: () => void }) {
+export type ResetRequests = Map<string, { session: string; request: string }>
+
+export function UsersSection({ onForbidden, resetRequests }: { onForbidden: () => void; resetRequests?: ResetRequests }) {
   const [filter, setFilter] = useState<AdminFilter>(emptyFilter)
   const [q, setQ] = useState('')
   const [page, setPage] = useState(1)
   const [data, setData] = useState<Page | null>(null)
   const [detail, setDetail] = useState<Detail | null>(null)
   const [error, setError] = useState('')
+  const [listError, setListError] = useState('')
+  const [notice, setNotice] = useState('')
+  const [refresh, setRefresh] = useState(0)
+  const [busy, setBusy] = useState(false)
+  const resetting = useRef(false)
+  // Retain ambiguous requests by player so a retry can never target a replacement session.
+  const localPending = useRef<ResetRequests>(new Map())
+  const pending = resetRequests ?? localPending.current
   const forbidden = useRef(onForbidden) // AdminApp truyền hàm mới mỗi lần render; không để nó kích hoạt gọi lại
   forbidden.current = onForbidden
 
   useEffect(() => {
     let live = true
-    setError('')
     callRpc<Page>('admin_search_users', { ...toRpcParams(filter), p_q: q.trim() || null, p_page: page })
       .then((r) => {
         if (!live) return
         if (r.code === 'FORBIDDEN') return forbidden.current()
-        if (!r.ok || !r.data) { setData(null); return setError(r.message ?? 'Không tải được danh sách.') }
+        if (!r.ok || !r.data) { setData(null); return setListError(r.message ?? 'Không tải được danh sách.') }
+        setListError('')
         setData(r.data)
       })
-      .catch((err) => { if (live) { setData(null); setError(message(err, 'Không tải được danh sách.')) } })
+      .catch((err) => { if (live) { setData(null); setListError(message(err, 'Không tải được danh sách.')) } })
     return () => { live = false }
-  }, [filter, q, page])
+  }, [filter, q, page, refresh])
 
   async function open(id: string) {
     setError('')
@@ -55,6 +65,50 @@ export function UsersSection({ onForbidden }: { onForbidden: () => void }) {
       setDetail(r.data)
     } catch (err) {
       setError(message(err, 'Không tải được chi tiết.'))
+    }
+  }
+
+  async function reset(row: Row) {
+    if (resetting.current) return
+    resetting.current = true
+    setBusy(true)
+    setError('')
+    setNotice('')
+    try {
+      let target = pending.get(row.player_id)
+      if (!target) {
+        const r = await callRpc<Detail>('admin_get_user_detail', { p_user_id: row.player_id })
+        if (r.code === 'FORBIDDEN') return forbidden.current()
+        if (!r.ok || !r.data) return setError(r.message ?? 'Không tải được chi tiết.')
+        const session = r.data.session?.session_id
+        if (!session) {
+          setNotice('Người dùng chưa có lượt chơi.')
+          setRefresh((n) => n + 1)
+          return
+        }
+        if (!confirm(`Reset lượt chơi cho ${row.email}? Điểm và trạng thái quà sẽ bị xóa.`)) return
+        target = { session, request: crypto.randomUUID() }
+        pending.set(row.player_id, target)
+      }
+      const r = await callRpc('admin_reset_player_progress', {
+        p_session_id: target.session, p_request_id: target.request,
+      })
+      if (r.code === 'FORBIDDEN') return forbidden.current()
+      if (!r.ok) {
+        if (r.code === 'CONFLICT') {
+          pending.delete(row.player_id)
+          setRefresh((n) => n + 1)
+        }
+        return setError(r.message ?? 'Không reset được lượt chơi. Bấm lại để thử lại cùng yêu cầu.')
+      }
+      pending.delete(row.player_id)
+      setNotice(`Đã reset lượt chơi cho ${row.email}.`)
+      setRefresh((n) => n + 1)
+    } catch (err) {
+      setError(message(err, 'Không nhận được kết quả. Bấm Reset lượt chơi để thử lại cùng yêu cầu.'))
+    } finally {
+      resetting.current = false
+      setBusy(false)
     }
   }
 
@@ -90,16 +144,19 @@ export function UsersSection({ onForbidden }: { onForbidden: () => void }) {
         value={q} onChange={(e) => { setQ(e.target.value); setPage(1) }} />
       <FilterBar value={filter} onChange={(f) => { setFilter(f); setPage(1) }} />
       {error && <p className="error" role="alert">{error}</p>}
+      {listError && <p className="error" role="alert">{listError}</p>}
+      {notice && <p role="status">{notice}</p>}
       {data?.rows.length === 0 && <p className="muted">Không có người dùng</p>}
       <table>
-        <thead><tr><th>Email</th><th>Tên</th><th>Trạng thái</th><th>Quà</th><th>Bắt đầu</th><th>Hoàn thành</th></tr></thead>
+        <thead><tr><th>Email</th><th>Tên</th><th>Trạng thái</th><th>Quà</th><th>Bắt đầu</th><th>Hoàn thành</th><th>Thao tác</th></tr></thead>
         <tbody>{data?.rows.map((r) => (
           <tr key={r.player_id}>
-            <td><button className="link" onClick={() => void open(r.player_id)}>{r.email}</button></td>
+            <td><button className="link" disabled={busy} onClick={() => void open(r.player_id)}>{r.email}</button></td>
             <td>{r.display_name ?? '—'}</td>
             <td>{statusLabel[r.status] ?? r.status}{r.status !== 'NONE' && ` · ${r.correct_count ?? 0}/${r.answered_count ?? 0}`}</td>
             <td>{r.prize ? prizeLabel[r.prize] : '—'}{r.locked && ' · Đã khóa'}</td>
             <td>{time(r.started_at)}</td><td>{time(r.completed_at)}</td>
+            <td><button disabled={busy || (r.status === 'NONE' && !pending.has(r.player_id))} onClick={() => void reset(r)}>Reset lượt chơi</button></td>
           </tr>
         ))}</tbody>
       </table>

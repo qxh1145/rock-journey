@@ -322,3 +322,7 @@ h2 { font-size: 1.05rem; margin: 0; }
 .play .nb-explain { padding: 0; color: var(--muted); }
 .play .tear.piece { clip-path: none; transform-origin: center; animation: swap .2s ease-out forwards; background: var(--bg); }
 .play .primary { border-radius: 10px; }
+
+.admin-login { display: grid; gap: 12px; max-width: 360px; margin-bottom: 16px; }
+.admin-login label { display: grid; gap: 6px; }
+.admin-login input { width: 100%; min-width: 0; box-sizing: border-box; }

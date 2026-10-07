@@ -46,5 +46,6 @@ The table in `supabase/migrations/20261005000000_init.sql` is the contract. Its 
 |---|---|---|---|
 | `admin_claim_reward` | `20261005020000_drop_staff_role.sql` | `reward_claimed` | `game_session` |
 | `admin_export_report` | `20261005000000_init.sql` | `report_exported` | `report` |
+| `admin_reset_player_progress` | `20261007115652_admin_reset_player_progress.sql` | `player_progress_reset` | `game_session` |
 
 Add a row to this table for every new writer. Grant, revoke and re-grant of admin rights are still owed entries (see [admin-auth.md](admin-auth.md)).
