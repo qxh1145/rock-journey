@@ -17,7 +17,7 @@ import { ResultScreen } from './screens/ResultScreen'
 import { ShowcaseScreen } from './screens/ShowcaseScreen'
 import { AdminApp } from './admin/AdminApp'
 
-const REPLAY_EMAIL = 'quandeptraixuhue@gmail.com'
+const REPLAY_EMAILS = ['quandeptraixuhue@gmail.com', 'bichtramnbk63@gmail.com']
 const NETWORK_ERROR = 'Không có kết nối mạng. Kiểm tra mạng rồi thử lại.'
 import './style.css'
 
@@ -168,7 +168,7 @@ function App() {
   }
 
   // chỉ ẩn/hiện nút; quyền thật do RPC replay_session kiểm tra email ở server
-  const canReplay = user?.email?.toLowerCase() === REPLAY_EMAIL
+  const canReplay = Boolean(user?.email && REPLAY_EMAILS.includes(user.email.trim().toLowerCase()))
   async function replay() {
     const r = await callRpc('replay_session').catch((e: unknown) => ({ ok: false, message: message(e, 'Không thể chơi lại.') }))
     if (!r.ok) { setError(r.message ?? 'Không thể chơi lại.'); return setScreen('error') }

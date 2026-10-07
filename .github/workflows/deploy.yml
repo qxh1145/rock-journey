@@ -24,6 +24,7 @@ jobs:
         run: |
           createdb rj_test
           psql rj_test -v ON_ERROR_STOP=1 -f supabase/tests/stub_auth.sql $(printf -- '-f %s ' supabase/migrations/*.sql) -f supabase/tests/smoke.sql
+          psql rj_test -v ON_ERROR_STOP=1 -f supabase/tests/replay.sql
       - uses: actions/setup-node@v4
         with:
           node-version: 22
