@@ -253,7 +253,7 @@ h2 { font-size: 1.05rem; margin: 0; }
 .start h1, .result h1 { font-size: 34px; line-height: 41px; }
 .start h1 { top: 80px; }
 .start > .muted { top: 190px; font-size: 17px; line-height: 24px; }
-.start .booth { left: 61px; top: 278px; width: 268px; height: 200px; object-fit: contain; }
+.start .mascot { left: 61px; top: 283px; width: 268px; height: 190px; }
 .start .rules { top: 491px; gap: 12px; line-height: 24px; }
 .start .error { top: 610px; }
 .start .bottom, .play .bottom, .result .bottom { margin: 0; padding: 0; }

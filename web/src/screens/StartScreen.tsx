@@ -1,9 +1,11 @@
+import { Mascot } from '../components/Mascot'
+
 export function StartScreen({ error, cta, onCta, busy }: { error: string; cta: string; onCta: () => void; busy?: boolean }) {
   return <main className="screen start">
     <p className="eyebrow">NGHỆ NHÂN TẠC ĐÁ</p>
     <h1>Từ khối đá thô,<br />đến một tác phẩm.</h1>
     <p className="muted">Khám phá nghề tạc đá qua 12 câu hỏi. Mỗi câu đúng giúp tác phẩm thành hình.</p>
-    <img className="booth" src="/assets/start-booth.webp" width="456" height="576" alt="Gian hàng Nghệ nhân tạc đá" />
+    <Mascot stage="RAW" />
     <ul className="rules">
       <li>12 câu hỏi · Mỗi câu chốt một lần</li>
       <li>Đạt 10/12 để nhận danh hiệu</li>
