@@ -15,7 +15,7 @@ export function ResultScreen({ game, topBar, onShowMedal, onReplay }: {
     <p className="score">{game.correct_count} / 12 câu đúng</p>
     {game.qualified_for_reward && <section className="panel">
       <h2>Đủ điều kiện nhận quà</h2>
-      <p>Đưa email tài khoản Google cho nhân viên để kiểm tra và nhận quà.</p>
+      <p>Bạn hãy chụp màn hình kết quả gửi về cho Fanpage Mỹ Nghệ Ngũ Hành để xác nhận thông tin và nhận quà nhé!</p>
       <p className="small">Trạng thái: {game.reward_claimed ? 'Đã nhận quà' : 'Chưa nhận quà'}</p>
     </section>}
     <div className="bottom">
